@@ -1,0 +1,103 @@
+body {
+  background: #111;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.pos-header {
+  background: #660000;
+  color: #FFD700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+}
+
+button {
+  background: #FFD700;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.pos-container {
+  display: flex;
+  height: calc(100vh - 80px);
+}
+
+/* Vùng bàn */
+.zone-layout {
+  flex: 1;
+  padding: 20px;
+  background: #1a1a1a;
+}
+
+.table-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.table {
+  background: #333;
+  color: #FFD700;
+  border-radius: 10px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.table.active {
+  background: #FFD700;
+  color: #000;
+}
+
+/* Vùng order + menu */
+.order-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  background: #222;
+  padding: 20px;
+  border-left: 2px solid #444;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.menu-item {
+  background: #333;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.menu-item:hover {
+  background: #555;
+}
+
+.order-area {
+  margin-top: 20px;
+  background: #1b1b1b;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.order-area ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+}

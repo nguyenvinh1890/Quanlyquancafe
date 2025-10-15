@@ -1,0 +1,51 @@
+<body>
+<header>
+  <h1>POS FOH</h1>
+  <a href="login.html" id="logoutBtn">Đăng xuất</a>
+</header>
+
+<main>
+  <!-- 1. Sơ đồ bàn -->
+  <section id="zoneArea">
+    <h2>Sơ đồ bàn</h2>
+    <div id="tableGrid" class="grid"></div>
+  </section>
+
+  <!-- 2. Menu -->
+  <section id="menuArea">
+    <h2>Menu</h2>
+    <div id="menuGrid" class="grid"></div>
+  </section>
+
+  <!-- 3. Order -->
+  <section id="orderArea">
+    <h2>Order</h2>
+    <div id="orderList"></div>
+    <button id="sendKitchenBtn">Gửi xuống bếp</button>
+  </section>
+</main>
+
+<script src="js/tables.js"></script>
+<script src="js/orders.js"></script>
+<script>
+document.getElementById('logoutBtn').onclick=()=>{
+  localStorage.removeItem('role');
+  window.location.href='login.html';
+};
+</script>
+<script>
+const role = localStorage.getItem("role");
+if (!role) {
+  alert("Vui lòng đăng nhập!");
+  window.location.href = "login.html";
+}
+if (window.location.pathname.includes("admin") && role !== "admin") {
+  alert("Bạn không có quyền truy cập trang Admin!");
+  window.location.href = "login.html";
+}
+</script>
+<script src="js/table.js"></script>
+<script src="js/order.js"></script>
+<script src="js/foh.js"></script>
+
+</body>
