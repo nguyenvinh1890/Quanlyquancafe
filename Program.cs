@@ -1,22 +1,44 @@
+using QLCF.DAL;
+using QLCF.BUS;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ToppingBUS>();
+builder.Services.AddScoped<LuaChonToppingBUS>();
+builder.Services.AddScoped<ToppingBUS>();
+builder.Services.AddScoped<DonHangBUS>();
+builder.Services.AddScoped<HoaDonBUS>();
+builder.Services.AddSingleton<ThanhToanBUS>();
+builder.Services.AddSingleton<NguoiDungBUS>();
+builder.Services.AddSingleton<VaiTroBUS>();
+builder.Services.AddSingleton<KhuVucBUS>();
+builder.Services.AddSingleton<BanBUS>();
+builder.Services.AddSingleton<CaLamBUS>();
+builder.Services.AddSingleton<ChiTietDonHangBUS>();
+builder.Services.AddSingleton<MonToppingBUS>();
 
-// Add DatabaseHelper as a service using connection string from appsettings.json
+
+
 string connectionString = builder.Configuration.GetConnectionString("SqlServer");
-builder.Services.AddScoped<QLCF.DAL.DatabaseHelper>(provider => new QLCF.DAL.DatabaseHelper(connectionString));
+builder.Services.AddSingleton(new DatabaseHelper(connectionString));
 
-// Add MonBUS as a service
-builder.Services.AddScoped<QLCF.BUS.MonBUS>();
+builder.Services.AddScoped<MonBUS>();
+builder.Services.AddScoped<SizeMonBUS>();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
+app.UseHttpsRedirection();
+app.UseAuthorization();
 app.MapControllers();
+
 
 app.Run();

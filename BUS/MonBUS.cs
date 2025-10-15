@@ -20,10 +20,10 @@ namespace QLCF.BUS
             try
             {
                 string sql = @"
-                SELECT m.ma_mon, m.ten_mon, MIN(s.gia) AS gia
-                FROM mon m
-                JOIN size_mon s ON m.ma_mon = s.ma_mon
-                GROUP BY m.ma_mon, m.ten_mon";
+        SELECT m.ma_mon, m.ten_mon, ISNULL(MIN(s.gia), 0) AS gia
+        FROM mon m
+        LEFT JOIN size_mon s ON m.ma_mon = s.ma_mon
+        GROUP BY m.ma_mon, m.ten_mon";
 
                 DataTable dt = _db.ExecuteQuery(sql);
                 var result = new List<Mon>();
@@ -33,8 +33,8 @@ namespace QLCF.BUS
                     result.Add(new Mon
                     {
                         MaMon = (int)r["ma_mon"],
-                        TenMon = r["ten_mon"].ToString(),
-                        Gia = (decimal)r["gia"]
+                        TenMon = r["ten_mon"].ToString() ?? "",
+                        Gia = Convert.ToDecimal(r["gia"])
                     });
                 }
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QLCF.BUS;
-using QLCF.DAL;
 using QLCF.Model;
 
 namespace QLCF.Controllers
@@ -20,29 +19,37 @@ namespace QLCF.Controllers
         public IActionResult GetAll()
         {
             var result = _monBUS.GetAll();
-            if (!result.IsSuccess) return BadRequest(result.Message);
-            return Ok(result);
+            if (!result.IsSuccess)
+                return BadRequest(result.Message);
+
+            
+            return Ok(new
+            {
+                success = result.IsSuccess,
+                message = result.Message,
+                data = result.Data
+            });
         }
 
         [HttpPost("add")]
         public IActionResult Add([FromBody] Mon mon)
         {
             var msg = _monBUS.Add(mon);
-            return Ok(msg);
+            return Ok(new { message = msg });
         }
 
         [HttpPut("update")]
         public IActionResult Update([FromBody] Mon mon)
         {
             var msg = _monBUS.Update(mon);
-            return Ok(msg);
+            return Ok(new { message = msg });
         }
 
         [HttpDelete("delete/{id}")]
         public IActionResult Delete(int id)
         {
             var msg = _monBUS.Delete(id);
-            return Ok(msg);
+            return Ok(new { message = msg });
         }
     }
 }
