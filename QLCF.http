@@ -1,0 +1,6 @@
+@QLCF_HostAddress = http://localhost:5242
+
+GET {{QLCF_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
