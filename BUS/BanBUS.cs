@@ -52,7 +52,12 @@ namespace QLCF.BUS
         {
             try
             {
-                string sql = "INSERT INTO ban(ky_hieu, ma_khu, suc_chua, trang_thai) VALUES (@ky_hieu, @ma_khu, @suc_chua, @trang_thai)";
+               
+                string sql = @"
+                    DECLARE @nextId INT = ISNULL((SELECT MAX(ma_ban) + 1 FROM ban), 1);
+                    INSERT INTO ban(ma_ban, ky_hieu, ma_khu, suc_chua, trang_thai)
+                    VALUES (@nextId, @ky_hieu, @ma_khu, @suc_chua, @trang_thai);";
+
                 var param = new Dictionary<string, object>
                 {
                     {"@ky_hieu", b.TenBan},
@@ -60,6 +65,7 @@ namespace QLCF.BUS
                     {"@suc_chua", b.SucChua},
                     {"@trang_thai", b.TrangThai ?? ""}
                 };
+
                 int rows = _db.ExecuteNonQuery(sql, param);
                 return rows > 0 ? "Thêm bàn thành công" : "Không thể thêm bàn";
             }
@@ -73,7 +79,11 @@ namespace QLCF.BUS
         {
             try
             {
-                string sql = "UPDATE ban SET ky_hieu=@ky_hieu, ma_khu=@ma_khu, suc_chua=@suc_chua, trang_thai=@trang_thai WHERE ma_ban=@ma_ban";
+                string sql = @"
+                    UPDATE ban 
+                    SET ky_hieu=@ky_hieu, ma_khu=@ma_khu, suc_chua=@suc_chua, trang_thai=@trang_thai 
+                    WHERE ma_ban=@ma_ban";
+
                 var param = new Dictionary<string, object>
                 {
                     {"@ma_ban", b.MaBan},
@@ -82,6 +92,7 @@ namespace QLCF.BUS
                     {"@suc_chua", b.SucChua},
                     {"@trang_thai", b.TrangThai ?? ""}
                 };
+
                 int rows = _db.ExecuteNonQuery(sql, param);
                 return rows > 0 ? "Cập nhật bàn thành công" : "Không tìm thấy bàn cần cập nhật";
             }

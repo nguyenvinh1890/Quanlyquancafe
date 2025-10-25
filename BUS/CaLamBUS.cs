@@ -19,7 +19,7 @@ namespace QLCF.BUS
         {
             try
             {
-                string sql = "SELECT ma_ca, ten_ca, thoi_gian_bat_dau, thoi_gian_ket_thuc FROM ca_lam";
+                string sql = "SELECT ma_ca, ten_ca, thoi_gian_bat_dau, thoi_gian_ket_thuc FROM vw_CaLam_GetAll";
                 DataTable dt = _db.ExecuteQuery(sql);
                 var list = new List<CaLam>();
 
@@ -29,12 +29,8 @@ namespace QLCF.BUS
                     {
                         MaCa = (int)r["ma_ca"],
                         TenCa = r["ten_ca"].ToString() ?? "",
-                        GioBatDau = r["thoi_gian_bat_dau"] == DBNull.Value
-                            ? DateTime.MinValue
-                            : Convert.ToDateTime(r["thoi_gian_bat_dau"]),
-                        GioKetThuc = r["thoi_gian_ket_thuc"] == DBNull.Value
-                            ? DateTime.MinValue
-                            : Convert.ToDateTime(r["thoi_gian_ket_thuc"])
+                        GioBatDau = r["thoi_gian_bat_dau"]?.ToString() ?? "",
+                        GioKetThuc = r["thoi_gian_ket_thuc"]?.ToString() ?? ""
                     });
                 }
 
@@ -45,6 +41,7 @@ namespace QLCF.BUS
                 return (false, "Lỗi khi lấy danh sách ca làm: " + ex.Message, new List<CaLam>());
             }
         }
+
 
         public string Add(CaLam c)
         {
