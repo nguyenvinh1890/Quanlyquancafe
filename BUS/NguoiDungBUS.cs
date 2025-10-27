@@ -1,5 +1,6 @@
 ﻿using QLCF.DAL;
 using QLCF.Model;
+using QLCF.Model.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -34,7 +35,7 @@ namespace QLCF.BUS
                         MaND = (int)r["ma_nd"],
                         HoTen = r["ho_ten"].ToString() ?? "",
                         TaiKhoan = r["tai_khoan"].ToString() ?? "",
-                        MatKhau = r["mat_khau"] as byte[],
+                        MatKhauStr = r["mat_khau"].ToString() ?? "",
                         MaVT = Convert.ToByte(r["ma_vt"]),
                         HoatDong = Convert.ToBoolean(r["hoat_dong"]),
                         TaoLuc = Convert.ToDateTime(r["tao_luc"])
@@ -60,7 +61,7 @@ namespace QLCF.BUS
                 {
                     {"@ho_ten", nd.HoTen},
                     {"@tai_khoan", nd.TaiKhoan},
-                    {"@mat_khau", nd.MatKhau ?? new byte[0]},
+                    {"@mat_khau", nd.MatKhauStr ?? ""},
                     {"@ma_vt", nd.MaVT},
                     {"@hoat_dong", nd.HoatDong}
                 };
@@ -109,6 +110,100 @@ namespace QLCF.BUS
             catch (Exception ex)
             {
                 return "Lỗi khi xóa người dùng: " + ex.Message;
+            }
+        }
+
+        public LoginResponse Login(LoginRequest request)
+        {
+            try
+            {
+                // Kiểm tra dữ liệu đầu vào
+                if (string.IsNullOrWhiteSpace(request.TaiKhoan) || string.IsNullOrWhiteSpace(request.MatKhau))
+                {
+                    return new LoginResponse
+                    {
+                        Success = false,
+                        Message = "Tài khoản và mật khẩu không được để trống",
+                        Data = null
+                    };
+                }
+
+                // Truy vấn thông tin người dùng kèm tên vai trò
+                string sql = @"
+                SELECT n.ma_nd, n.ho_ten, n.tai_khoan, n.mat_khau, n.ma_vt, n.hoat_dong,
+                       v.ten_vt
+                FROM nguoi_dung n
+                INNER JOIN vai_tro v ON n.ma_vt = v.ma_vt
+                WHERE n.tai_khoan = @tai_khoan";
+
+                var param = new Dictionary<string, object>
+                {
+                    { "@tai_khoan", request.TaiKhoan }
+                };
+
+                DataTable dt = _db.ExecuteQuery(sql, param);
+
+                // Kiểm tra người dùng có tồn tại không
+                if (dt.Rows.Count == 0)
+                {
+                    return new LoginResponse
+                    {
+                        Success = false,
+                        Message = "Tài khoản không tồn tại",
+                        Data = null
+                    };
+                }
+
+                DataRow row = dt.Rows[0];
+
+                // Kiểm tra tài khoản có đang hoạt động không
+                bool hoatDong = Convert.ToBoolean(row["hoat_dong"]);
+                if (!hoatDong)
+                {
+                    return new LoginResponse
+                    {
+                        Success = false,
+                        Message = "Tài khoản đã bị khóa",
+                        Data = null
+                    };
+                }
+
+                // ✅ So sánh mật khẩu dạng chuỗi
+                string storedPassword = row["mat_khau"].ToString() ?? "";
+                if (storedPassword != request.MatKhau)
+                {
+                    return new LoginResponse
+                    {
+                        Success = false,
+                        Message = "Mật khẩu không đúng",
+                        Data = null
+                    };
+                }
+
+                // Đăng nhập thành công - trả về thông tin người dùng
+                return new LoginResponse
+                {
+                    Success = true,
+                    Message = "Đăng nhập thành công",
+                    Data = new UserInfo
+                    {
+                        MaND = (int)row["ma_nd"],
+                        HoTen = row["ho_ten"].ToString() ?? "",
+                        TaiKhoan = row["tai_khoan"].ToString() ?? "",
+                        MaVT = Convert.ToByte(row["ma_vt"]),
+                        TenVaiTro = row["ten_vt"].ToString() ?? "",
+                        HoatDong = hoatDong
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new LoginResponse
+                {
+                    Success = false,
+                    Message = "Lỗi khi đăng nhập: " + ex.Message,
+                    Data = null
+                };
             }
         }
     }

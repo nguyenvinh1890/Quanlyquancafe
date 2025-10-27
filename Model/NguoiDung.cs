@@ -5,7 +5,10 @@
         public int MaND { get; set; }
         public string HoTen { get; set; } = string.Empty;
         public string TaiKhoan { get; set; } = string.Empty;
-        public byte[]? MatKhau { get; set; } 
+
+      
+        public string? MatKhauStr { get; set; }
+
         public byte MaVT { get; set; }
         public bool HoatDong { get; set; }
         public DateTime TaoLuc { get; set; }
