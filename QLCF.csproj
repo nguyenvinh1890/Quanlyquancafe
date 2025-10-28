@@ -21,4 +21,11 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\btlfe\ban.html" />
+    <None Include="wwwroot\btlfe\css\style.css" />
+    <None Include="wwwroot\btlfe\js\app.js" />
+    <None Include="wwwroot\btlfe\js\roles.js" />
+  </ItemGroup>
+
 </Project>

@@ -40,7 +40,7 @@ builder.Services.AddScoped<MonBUS>();
 builder.Services.AddScoped<SizeMonBUS>();
 
 var app = builder.Build();
-
+app.UseStaticFiles();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
