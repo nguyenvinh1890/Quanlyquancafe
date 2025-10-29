@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Quản lý Quán Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">☕</div>
+                <h2>CAFE MANAGER</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="index.html">
+                        <span class="icon">🏠</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="khu-vuc.html">
+                        <span class="icon">📍</span>
+                        <span>Khu vực</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="ban.html">
+                        <span class="icon">🪑</span>
+                        <span>Bàn</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="mon.html">
+                        <span class="icon">☕</span>
+                        <span>Món</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="size.html">
+                        <span class="icon">📏</span>
+                        <span>Size món</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="topping.html">
+                        <span class="icon">🧊</span>
+                        <span>Topping</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="don-hang.html">
+                        <span class="icon">📋</span>
+                        <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="hoa-don.html">
+                        <span class="icon">🧾</span>
+                        <span>Hóa đơn</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="thanh-toan.html">
+                        <span class="icon">💰</span>
+                        <span>Thanh toán</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="nguoi-dung.html">
+                        <span class="icon">👥</span>
+                        <span>Nhân viên</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="ca-lam.html">
+                        <span class="icon">🕐</span>
+                        <span>Ca làm</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="vai-tro.html">
+                        <span class="icon">🔑</span>
+                        <span>Vai trò</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" onclick="logout(); return false;">
+                        <span class="icon">🚪</span>
+                        <span>Đăng xuất</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">Admin</div>
+                            <div class="user-role" id="userRole">Quản lý</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <div id="alertContainer"></div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <span>📋</span>
+                        </div>
+                        <div class="stat-details">
+                            <h4 id="totalOrders">0</h4>
+                            <p>Đơn hàng hôm nay</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <span>💰</span>
+                        </div>
+                        <div class="stat-details">
+                            <h4 id="totalRevenue">0đ</h4>
+                            <p>Doanh thu hôm nay</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <span>🪑</span>
+                        </div>
+                        <div class="stat-details">
+                            <h4 id="totalTables">0</h4>
+                            <p>Bàn đang sử dụng</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <span>☕</span>
+                        </div>
+                        <div class="stat-details">
+                            <h4 id="totalProducts">0</h4>
+                            <p>Tổng số món</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Đơn hàng gần đây</h3>
+                        <a href="don-hang.html" class="btn btn-sm btn-primary">Xem tất cả</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã ĐH</th>
+                                        <th>Bàn</th>
+                                        <th>Loại</th>
+                                        <th>Trạng thái</th>
+                                        <th>Mở bởi</th>
+                                        <th>Mở lúc</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentOrdersTable">
+                                    <tr>
+                                        <td colspan="6" style="text-align: center; padding: 40px;">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Invoices -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Hóa đơn gần đây</h3>
+                        <a href="hoa-don.html" class="btn btn-sm btn-primary">Xem tất cả</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã HĐ</th>
+                                        <th>Mã ĐH</th>
+                                        <th>Tạm tính</th>
+                                        <th>Giảm giá</th>
+                                        <th>Thuế</th>
+                                        <th>Trạng thái</th>
+                                        <th>Tạo lúc</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentInvoicesTable">
+                                    <tr>
+                                        <td colspan="7" style="text-align: center; padding: 40px;">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/roles.js"></script>
+    <script>
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load statistics
+                // TODO: Gọi API thực tế
+                // const orders = await apiGet('/DonHang');
+                // const invoices = await apiGet('/HoaDon');
+                // const tables = await apiGet('/Ban');
+                // const products = await apiGet('/Mon');
+                
+                // Giả lập dữ liệu
+                document.getElementById('totalOrders').textContent = '15';
+                document.getElementById('totalRevenue').textContent = formatCurrency(5500000);
+                document.getElementById('totalTables').textContent = '8/20';
+                document.getElementById('totalProducts').textContent = '45';
+                
+                // Load recent orders
+                loadRecentOrders();
+                
+                // Load recent invoices
+                loadRecentInvoices();
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showAlert('Lỗi khi tải dữ liệu dashboard', 'danger');
+            }
+        }
+        
+        async function loadRecentOrders() {
+            // TODO: Gọi API thực tế
+            // const orders = await apiGet('/DonHang?limit=5');
+            
+            // Giả lập dữ liệu
+            const sampleOrders = [
+                { maDH: 1, maBan: 5, loaiDH: 'Tại quán', trangThai: 'Đang xử lý', moBoiTen: 'Nguyễn Văn A', moLuc: new Date().toISOString() },
+                { maDH: 2, maBan: 3, loaiDH: 'Mang về', trangThai: 'Hoàn thành', moBoiTen: 'Trần Thị B', moLuc: new Date(Date.now() - 3600000).toISOString() },
+                { maDH: 3, maBan: 8, loaiDH: 'Tại quán', trangThai: 'Đang xử lý', moBoiTen: 'Lê Văn C', moLuc: new Date(Date.now() - 7200000).toISOString() }
+            ];
+            
+            const columns = [
+                { field: 'maDH' },
+                { field: 'maBan', render: (data) => data.maBan ? `Bàn ${data.maBan}` : 'N/A' },
+                { field: 'loaiDH' },
+                { 
+                    field: 'trangThai',
+                    render: (data) => {
+                        const badgeClass = data.trangThai === 'Hoàn thành' ? 'badge-success' : 
+                                          data.trangThai === 'Đang xử lý' ? 'badge-warning' : 'badge-danger';
+                        return `<span class="badge ${badgeClass}">${data.trangThai}</span>`;
+                    }
+                },
+                { field: 'moBoiTen' },
+                { field: 'moLuc', render: (data) => formatDateTime(data.moLuc) }
+            ];
+            
+            renderTable('recentOrdersTable', sampleOrders, columns);
+        }
+        
+        async function loadRecentInvoices() {
+            // TODO: Gọi API thực tế
+            // const invoices = await apiGet('/HoaDon?limit=5');
+            
+            // Giả lập dữ liệu
+            const sampleInvoices = [
+                { maHD: 1, maDH: 1, tamTinh: 250000, giamGia: 0, thue: 25000, trangThai: 'Đã thanh toán', taoLuc: new Date().toISOString() },
+                { maHD: 2, maDH: 2, tamTinh: 180000, giamGia: 20000, thue: 16000, trangThai: 'Đã thanh toán', taoLuc: new Date(Date.now() - 3600000).toISOString() }
+            ];
+            
+            const columns = [
+                { field: 'maHD' },
+                { field: 'maDH' },
+                { field: 'tamTinh', render: (data) => formatCurrency(data.tamTinh) },
+                { field: 'giamGia', render: (data) => formatCurrency(data.giamGia) },
+                { field: 'thue', render: (data) => formatCurrency(data.thue) },
+                { 
+                    field: 'trangThai',
+                    render: (data) => {
+                        const badgeClass = data.trangThai === 'Đã thanh toán' ? 'badge-success' : 'badge-warning';
+                        return `<span class="badge ${badgeClass}">${data.trangThai}</span>`;
+                    }
+                },
+                { field: 'taoLuc', render: (data) => formatDateTime(data.taoLuc) }
+            ];
+            
+            renderTable('recentInvoicesTable', sampleInvoices, columns);
+        }
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+        });
+    </script>
+</body>
+</html>
+

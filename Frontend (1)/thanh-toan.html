@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Thanh toán - Quản lý Quán Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">☕</div>
+                <h2>CAFE MANAGER</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="index.html">
+                        <span class="icon">🏠</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="khu-vuc.html">
+                        <span class="icon">📍</span>
+                        <span>Khu vực</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="ban.html">
+                        <span class="icon">🪑</span>
+                        <span>Bàn</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="mon.html">
+                        <span class="icon">☕</span>
+                        <span>Món</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="size.html">
+                        <span class="icon">📏</span>
+                        <span>Size món</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="topping.html">
+                        <span class="icon">🧊</span>
+                        <span>Topping</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="don-hang.html">
+                        <span class="icon">📋</span>
+                        <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="hoa-don.html">
+                        <span class="icon">🧾</span>
+                        <span>Hóa đơn</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="thanh-toan.html">
+                        <span class="icon">💰</span>
+                        <span>Thanh toán</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="nguoi-dung.html">
+                        <span class="icon">👥</span>
+                        <span>Nhân viên</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="ca-lam.html">
+                        <span class="icon">🕐</span>
+                        <span>Ca làm</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="vai-tro.html">
+                        <span class="icon">🔑</span>
+                        <span>Vai trò</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" onclick="logout(); return false;">
+                        <span class="icon">🚪</span>
+                        <span>Đăng xuất</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Quản lý Thanh toán</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">Admin</div>
+                            <div class="user-role" id="userRole">Quản lý</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <div id="alertContainer"></div>
+
+                <!-- Stats -->
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 24px;">
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <span>💵</span>
+                        </div>
+                        <div class="stat-details">
+                            <h4 id="totalCash">0đ</h4>
+                            <p>Tiền mặt</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <span>💳</span>
+                        </div>
+                        <div class="stat-details">
+                            <h4 id="totalCard">0đ</h4>
+                            <p>Chuyển khoản</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <span>📱</span>
+                        </div>
+                        <div class="stat-details">
+                            <h4 id="totalEwallet">0đ</h4>
+                            <p>Ví điện tử</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Danh sách Thanh toán</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Action Bar -->
+                        <div class="action-bar">
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="Tìm kiếm thanh toán...">
+                                <span class="search-icon">🔍</span>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="openAddModal()">
+                                    ➕ Thêm thanh toán
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã TT</th>
+                                        <th>Mã HĐ</th>
+                                        <th>Phương thức</th>
+                                        <th>Số tiền</th>
+                                        <th>Thu bởi</th>
+                                        <th>Trả lúc</th>
+                                        <th style="text-align: center;">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="thanhToanTable">
+                                    <tr>
+                                        <td colspan="7" style="text-align: center; padding: 40px;">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Thêm/Sửa -->
+    <div id="thanhToanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Thêm thanh toán</h3>
+                <button class="modal-close" onclick="closeModal('thanhToanModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="thanhToanForm">
+                    <input type="hidden" id="maTT" name="maTT">
+                    
+                    <div class="form-group">
+                        <label for="maHD">Mã hóa đơn <span style="color: red;">*</span></label>
+                        <select id="maHD" name="maHD" class="form-control" required>
+                            <option value="">-- Chọn hóa đơn --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phuongThuc">Phương thức <span style="color: red;">*</span></label>
+                            <select id="phuongThuc" name="phuongThuc" class="form-control" required>
+                                <option value="Tiền mặt">Tiền mặt</option>
+                                <option value="Chuyển khoản">Chuyển khoản</option>
+                                <option value="Ví điện tử">Ví điện tử</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="soTien">Số tiền <span style="color: red;">*</span></label>
+                            <input type="number" id="soTien" name="soTien" class="form-control" min="0" step="1000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="thuBoi">Thu bởi</label>
+                        <select id="thuBoi" name="thuBoi" class="form-control">
+                            <option value="">-- Chọn nhân viên --</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('thanhToanModal')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveThanhToan()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/roles.js"></script>
+    <script>
+        let isEditMode = false;
+
+        // Load dropdowns
+        async function loadDropdowns() {
+            // Load hóa đơn
+            const sampleHD = [
+                { maHD: 1, label: 'Hóa đơn #1 - 275,000đ' },
+                { maHD: 2, label: 'Hóa đơn #2 - 176,000đ' },
+                { maHD: 3, label: 'Hóa đơn #3 - 297,000đ' }
+            ];
+            const selectHD = document.getElementById('maHD');
+            sampleHD.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.maHD;
+                option.textContent = item.label;
+                selectHD.appendChild(option);
+            });
+
+            // Load nhân viên
+            const sampleNV = [
+                { maND: 1, hoTen: 'Nguyễn Văn A' },
+                { maND: 2, hoTen: 'Trần Thị B' }
+            ];
+            const selectNV = document.getElementById('thuBoi');
+            sampleNV.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.maND;
+                option.textContent = item.hoTen;
+                selectNV.appendChild(option);
+            });
+        }
+
+        // Load thống kê
+        function loadStats() {
+            document.getElementById('totalCash').textContent = formatCurrency(1500000);
+            document.getElementById('totalCard').textContent = formatCurrency(2300000);
+            document.getElementById('totalEwallet').textContent = formatCurrency(800000);
+        }
+
+        // Load danh sách thanh toán
+        async function loadThanhToan() {
+            try {
+                // TODO: Gọi API thực tế
+                const sampleData = [
+                    { maTT: 1, maHD: 1, phuongThuc: 'Tiền mặt', soTien: 275000, thuBoi: 1, thuBoiTen: 'Nguyễn Văn A', traLuc: new Date().toISOString() },
+                    { maTT: 2, maHD: 2, phuongThuc: 'Chuyển khoản', soTien: 176000, thuBoi: 2, thuBoiTen: 'Trần Thị B', traLuc: new Date(Date.now() - 3600000).toISOString() },
+                    { maTT: 3, maHD: 3, phuongThuc: 'Ví điện tử', soTien: 297000, thuBoi: 1, thuBoiTen: 'Nguyễn Văn A', traLuc: new Date(Date.now() - 7200000).toISOString() },
+                    { maTT: 4, maHD: 4, phuongThuc: 'Tiền mặt', soTien: 495000, thuBoi: 2, thuBoiTen: 'Trần Thị B', traLuc: new Date(Date.now() - 10800000).toISOString() }
+                ];
+                
+                const columns = [
+                    { field: 'maTT' },
+                    { field: 'maHD' },
+                    { 
+                        field: 'phuongThuc',
+                        render: (data) => {
+                            const icon = data.phuongThuc === 'Tiền mặt' ? '💵' : 
+                                        data.phuongThuc === 'Chuyển khoản' ? '💳' : '📱';
+                            return `${icon} ${data.phuongThuc}`;
+                        }
+                    },
+                    { field: 'soTien', render: (data) => `<strong style="color: var(--success-color);">${formatCurrency(data.soTien)}</strong>` },
+                    { field: 'thuBoiTen' },
+                    { field: 'traLuc', render: (data) => formatDateTime(data.traLuc) }
+                ];
+                
+                const actions = (data) => `
+                    <div style="text-align: center;">
+                        <button class="btn btn-sm btn-warning" onclick="editThanhToan(${data.maTT})">✏️ Sửa</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteThanhToan(${data.maTT})">🗑️ Xóa</button>
+                    </div>
+                `;
+                
+                renderTable('thanhToanTable', sampleData, columns, actions);
+                searchTable('searchInput', 'thanhToanTable');
+            } catch (error) {
+                console.error('Error loading thanh toan:', error);
+                showAlert('Lỗi khi tải danh sách thanh toán', 'danger');
+            }
+        }
+
+        // Mở modal thêm
+        function openAddModal() {
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Thêm thanh toán';
+            resetForm('thanhToanForm');
+            openModal('thanhToanModal');
+        }
+
+        // Sửa thanh toán
+        async function editThanhToan(id) {
+            try {
+                const sampleData = {
+                    maTT: id,
+                    maHD: 1,
+                    phuongThuc: 'Tiền mặt',
+                    soTien: 275000,
+                    thuBoi: 1
+                };
+                
+                isEditMode = true;
+                document.getElementById('modalTitle').textContent = 'Sửa thanh toán';
+                fillForm('thanhToanForm', sampleData);
+                openModal('thanhToanModal');
+            } catch (error) {
+                console.error('Error loading thanh toan:', error);
+                showAlert('Lỗi khi tải thông tin thanh toán', 'danger');
+            }
+        }
+
+        // Lưu thanh toán
+        async function saveThanhToan() {
+            try {
+                const formData = getFormData('thanhToanForm');
+                
+                if (!formData.maHD || !formData.phuongThuc || !formData.soTien) {
+                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
+                    return;
+                }
+                
+                if (isEditMode) {
+                    showAlert('Cập nhật thanh toán thành công!', 'success');
+                } else {
+                    showAlert('Thêm thanh toán thành công!', 'success');
+                }
+                
+                closeModal('thanhToanModal');
+                loadThanhToan();
+                loadStats();
+            } catch (error) {
+                console.error('Error saving thanh toan:', error);
+                showAlert('Lỗi khi lưu thanh toán', 'danger');
+            }
+        }
+
+        // Xóa thanh toán
+        async function deleteThanhToan(id) {
+            if (!confirmDelete('Bạn có chắc chắn muốn xóa thanh toán này?')) {
+                return;
+            }
+            
+            try {
+                showAlert('Xóa thanh toán thành công!', 'success');
+                loadThanhToan();
+                loadStats();
+            } catch (error) {
+                console.error('Error deleting thanh toan:', error);
+                showAlert('Lỗi khi xóa thanh toán', 'danger');
+            }
+        }
+
+        // Load data khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDropdowns();
+            loadStats();
+            loadThanhToan();
+        });
+    </script>
+</body>
+</html>
+
