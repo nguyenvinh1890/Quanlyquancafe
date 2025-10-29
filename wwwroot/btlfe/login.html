@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Quản lý Quán Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="logo">☕</div>
+                <h1>QUẢN LÝ QUÁN CAFE</h1>
+                <p>Đăng nhập để tiếp tục</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Tài khoản</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="taiKhoan"
+                        class="form-control" 
+                        placeholder="Nhập tài khoản"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="matKhau"
+                        class="form-control" 
+                        placeholder="Nhập mật khẩu"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="vaiTro">Đăng nhập với vai trò</label>
+                    <select id="vaiTro" name="vaiTro" class="form-control" required>
+                        <option value="">-- Chọn vai trò --</option>
+                        <option value="1">Quản lý</option>
+                        <option value="2">Thu ngân</option>
+                        <option value="3">Phục vụ</option>
+                        <option value="4">Pha chế</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Đăng nhập
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 20px; color: var(--text-light); font-size: 14px;">
+                <p>Phiên bản 1.0 - 2024</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/roles.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = getFormData('loginForm');
+            
+            // Validate vai trò
+            if (!formData.vaiTro) {
+                showAlert('Vui lòng chọn vai trò!', 'warning');
+                return;
+            }
+            
+            // TODO: Gọi API đăng nhập thực tế
+            // const result = await apiPost('/NguoiDung/login', formData);
+            
+            // Giả lập đăng nhập thành công với vai trò được chọn
+            setTimeout(() => {
+                const roleId = parseInt(formData.vaiTro);
+                const roleName = getRoleName(roleId);
+                
+                // Lưu token và thông tin user
+                setAuthToken('fake-token-12345');
+                setUserInfo({
+                    maND: roleId,
+                    hoTen: `User ${roleName}`,
+                    taiKhoan: formData.taiKhoan,
+                    tenVaiTro: roleName,
+                    maVT: roleId
+                });
+                
+                showAlert(`Đăng nhập thành công với vai trò ${roleName}!`, 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+
