@@ -15,84 +15,11 @@
                 <h2>CAFE MANAGER</h2>
             </div>
             <ul class="sidebar-menu">
-                <li class="menu-item">
-                    <a href="index.html">
-                        <span class="icon">🏠</span>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="khu-vuc.html">
-                        <span class="icon">📍</span>
-                        <span>Khu vực</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ban.html">
-                        <span class="icon">🪑</span>
-                        <span>Bàn</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="mon.html">
-                        <span class="icon">☕</span>
-                        <span>Món</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="size.html">
-                        <span class="icon">📏</span>
-                        <span>Size món</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="topping.html">
-                        <span class="icon">🧊</span>
-                        <span>Topping</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="don-hang.html">
-                        <span class="icon">📋</span>
-                        <span>Đơn hàng</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="hoa-don.html">
-                        <span class="icon">🧾</span>
-                        <span>Hóa đơn</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="thanh-toan.html">
-                        <span class="icon">💰</span>
-                        <span>Thanh toán</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="nguoi-dung.html">
-                        <span class="icon">👥</span>
-                        <span>Nhân viên</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ca-lam.html">
-                        <span class="icon">🕐</span>
-                        <span>Ca làm</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="vai-tro.html">
-                        <span class="icon">🔑</span>
-                        <span>Vai trò</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" onclick="logout(); return false;">
-                        <span class="icon">🚪</span>
-                        <span>Đăng xuất</span>
-                    </a>
-                </li>
+                <li class="menu-item"><a href="index.html"><span class="icon">🏠</span><span>Dashboard</span></a></li>
+                <li class="menu-item"><a href="ban.html"><span class="icon">🪑</span><span>Bàn</span></a></li>
+                <li class="menu-item"><a href="hoa-don.html"><span class="icon">🧾</span><span>Hóa đơn</span></a></li>
+                <li class="menu-item"><a href="ca-lam.html" class="active"><span class="icon">🕐</span><span>Ca làm</span></a></li>
+                <li class="menu-item"><a href="#" onclick="logout(); return false;"><span class="icon">🚪</span><span>Đăng xuất</span></a></li>
             </ul>
         </aside>
 
@@ -123,16 +50,13 @@
                         <h3>Danh sách Ca làm</h3>
                     </div>
                     <div class="card-body">
-                        <!-- Action Bar -->
                         <div class="action-bar">
                             <div class="search-box">
                                 <input type="text" id="searchInput" placeholder="Tìm kiếm ca làm...">
                                 <span class="search-icon">🔍</span>
                             </div>
                             <div class="action-buttons">
-                                <button class="btn btn-primary" onclick="openAddModal()">
-                                    ➕ Thêm ca làm
-                                </button>
+                                <button class="btn btn-primary" onclick="openAddModal()">➕ Thêm ca làm</button>
                             </div>
                         </div>
 
@@ -145,12 +69,12 @@
                                         <th>Tên Ca</th>
                                         <th>Giờ bắt đầu</th>
                                         <th>Giờ kết thúc</th>
-                                        <th style="text-align: center;">Thao tác</th>
+                                        <th style="text-align:center;">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody id="caLamTable">
                                     <tr>
-                                        <td colspan="5" style="text-align: center; padding: 40px;">
+                                        <td colspan="5" style="text-align:center;padding:40px;">
                                             <div class="spinner"></div>
                                         </td>
                                     </tr>
@@ -163,7 +87,7 @@
         </main>
     </div>
 
-    <!-- Modal Thêm/Sửa -->
+    <!-- Modal -->
     <div id="caLamModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -173,20 +97,19 @@
             <div class="modal-body">
                 <form id="caLamForm">
                     <input type="hidden" id="maCa" name="maCa">
-                    
+
                     <div class="form-group">
-                        <label for="tenCa">Tên ca <span style="color: red;">*</span></label>
+                        <label for="tenCa">Tên Ca <span style="color:red">*</span></label>
                         <input type="text" id="tenCa" name="tenCa" class="form-control" required>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="gioBatDau">Giờ bắt đầu <span style="color: red;">*</span></label>
+                            <label for="gioBatDau">Giờ bắt đầu <span style="color:red">*</span></label>
                             <input type="time" id="gioBatDau" name="gioBatDau" class="form-control" required>
                         </div>
-
                         <div class="form-group">
-                            <label for="gioKetThuc">Giờ kết thúc <span style="color: red;">*</span></label>
+                            <label for="gioKetThuc">Giờ kết thúc <span style="color:red">*</span></label>
                             <input type="time" id="gioKetThuc" name="gioKetThuc" class="form-control" required>
                         </div>
                     </div>
@@ -204,36 +127,37 @@
     <script>
         let isEditMode = false;
 
-        // Load danh sách ca làm
+        // Load danh sách Ca làm
         async function loadCaLam() {
             try {
-                // TODO: Gọi API thực tế
-                const sampleData = [
-                    { maCa: 1, tenCa: 'Ca sáng', gioBatDau: '06:00', gioKetThuc: '12:00' },
-                    { maCa: 2, tenCa: 'Ca chiều', gioBatDau: '12:00', gioKetThuc: '18:00' },
-                    { maCa: 3, tenCa: 'Ca tối', gioBatDau: '18:00', gioKetThuc: '22:00' },
-                    { maCa: 4, tenCa: 'Ca đêm', gioBatDau: '22:00', gioKetThuc: '02:00' }
-                ];
-                
-                const columns = [
-                    { field: 'maCa' },
-                    { field: 'tenCa' },
-                    { field: 'gioBatDau', render: (data) => formatTime(data.gioBatDau) },
-                    { field: 'gioKetThuc', render: (data) => formatTime(data.gioKetThuc) }
-                ];
-                
-                const actions = (data) => `
-                    <div style="text-align: center;">
-                        <button class="btn btn-sm btn-warning" onclick="editCaLam(${data.maCa})">✏️ Sửa</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteCaLam(${data.maCa})">🗑️ Xóa</button>
-                    </div>
-                `;
-                
-                renderTable('caLamTable', sampleData, columns, actions);
-                searchTable('searchInput', 'caLamTable');
+                showLoading('caLamTable');
+                const response = await apiGet('/CaLam/get-all');
+                hideLoading('caLamTable');
+
+                if (response && response.length > 0) {
+                    const columns = [
+                        { field: 'maCa' },
+                        { field: 'tenCa' },
+                        { field: 'gioBatDau', render: (x) => x.gioBatDau?.substring(0,5) },
+                        { field: 'gioKetThuc', render: (x) => x.gioKetThuc?.substring(0,5) }
+                    ];
+
+                    const actions = (x) => `
+                        <div style="text-align:center;">
+                            <button class="btn btn-sm btn-warning" onclick="editCaLam(${x.maCa})">✏️ Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteCaLam(${x.maCa})">🗑️ Xóa</button>
+                        </div>
+                    `;
+
+                    renderTable('caLamTable', response, columns, actions);
+                    searchTable('searchInput', 'caLamTable');
+                } else {
+                    showAlert('Không có dữ liệu ca làm', 'info');
+                }
             } catch (error) {
-                console.error('Error loading ca lam:', error);
-                showAlert('Lỗi khi tải danh sách ca làm', 'danger');
+                console.error('Error loading CaLam:', error);
+                hideLoading('caLamTable');
+                showAlert('Lỗi khi tải danh sách ca làm!', 'danger');
             }
         }
 
@@ -248,67 +172,67 @@
         // Sửa ca làm
         async function editCaLam(id) {
             try {
-                const sampleData = {
-                    maCa: id,
-                    tenCa: 'Ca sáng',
-                    gioBatDau: '06:00',
-                    gioKetThuc: '12:00'
-                };
-                
-                isEditMode = true;
-                document.getElementById('modalTitle').textContent = 'Sửa ca làm';
-                fillForm('caLamForm', sampleData);
-                openModal('caLamModal');
+                const response = await apiGet('/CaLam/get-all');
+                if (response) {
+                    const ca = response.find(x => x.maCa === id);
+                    if (ca) {
+                        isEditMode = true;
+                        document.getElementById('modalTitle').textContent = 'Sửa ca làm';
+                        fillForm('caLamForm', ca);
+                        openModal('caLamModal');
+                    }
+                }
             } catch (error) {
-                console.error('Error loading ca lam:', error);
-                showAlert('Lỗi khi tải thông tin ca làm', 'danger');
+                showAlert('Lỗi khi tải thông tin ca làm!', 'danger');
             }
         }
 
         // Lưu ca làm
-        async function saveCaLam() {
-            try {
-                const formData = getFormData('caLamForm');
-                
-                if (!formData.tenCa || !formData.gioBatDau || !formData.gioKetThuc) {
-                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
-                    return;
-                }
-                
-                if (isEditMode) {
-                    showAlert('Cập nhật ca làm thành công!', 'success');
-                } else {
-                    showAlert('Thêm ca làm thành công!', 'success');
-                }
-                
-                closeModal('caLamModal');
-                loadCaLam();
-            } catch (error) {
-                console.error('Error saving ca lam:', error);
-                showAlert('Lỗi khi lưu ca làm', 'danger');
-            }
+       async function saveCaLam() {
+    const formData = {
+        maCa: document.getElementById('maCa').value || 0,
+        tenCa: document.getElementById('tenCa').value.trim(),
+        gioBatDau: document.getElementById('gioBatDau').value,
+        gioKetThuc: document.getElementById('gioKetThuc').value
+    };
+
+    if (!formData.tenCa || !formData.gioBatDau || !formData.gioKetThuc) {
+        showAlert('Vui lòng nhập đầy đủ thông tin!', 'warning');
+        return;
+    }
+
+    try {
+        let ok;
+        if (isEditMode) {
+            ok = await apiPut('/CaLam/update', formData);
+            showAlert('Cập nhật ca làm thành công!', 'success');
+        } else {
+            ok = await apiPost('/CaLam/add', formData);
+            showAlert('Thêm mới ca làm thành công!', 'success');
         }
+
+        closeModal('caLamModal');
+        loadCaLam();
+    } catch (error) {
+        console.error('Lỗi khi lưu ca làm:', error);
+        showAlert('Lỗi khi lưu dữ liệu! Kiểm tra lại API.', 'danger');
+    }
+}
 
         // Xóa ca làm
         async function deleteCaLam(id) {
-            if (!confirmDelete('Bạn có chắc chắn muốn xóa ca làm này?')) {
-                return;
-            }
-            
+            if (!confirmDelete('Bạn có chắc chắn muốn xóa ca làm này?')) return;
             try {
+                const ok = await apiDelete(`/CaLam/delete/${id}`);
                 showAlert('Xóa ca làm thành công!', 'success');
                 loadCaLam();
             } catch (error) {
-                console.error('Error deleting ca lam:', error);
-                showAlert('Lỗi khi xóa ca làm', 'danger');
+                console.error('Error deleting CaLam:', error);
+                showAlert('Lỗi khi xóa ca làm!', 'danger');
             }
         }
 
-        // Load data khi trang load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadCaLam();
-        });
+        document.addEventListener('DOMContentLoaded', loadCaLam);
     </script>
 </body>
 </html>
-
