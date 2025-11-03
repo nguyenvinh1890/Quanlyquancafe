@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Món - Quán Cafe</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js"></script>
+  <script src="js/roles.js"></script>
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">☕</div>
+        <h2>CAFE MANAGER</h2>
+      </div>
+      <ul class="sidebar-menu"></ul>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left"><h1>🍽️ Quản lý Món</h1></div>
+        <div class="header-right">
+          <div class="user-info">
+            <div id="userAvatar" class="user-avatar">A</div>
+            <div class="user-details">
+              <div id="userName" class="user-name">Admin</div>
+              <div id="userRole" class="user-role">Quản lý</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Danh sách Món</h3>
+            <div class="action-buttons">
+              <button class="btn btn-success" onclick="openAddModal()">➕ Thêm món</button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="action-bar">
+              <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm món...">
+                <span class="search-icon">🔍</span>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Mã Món</th>
+                    <th>Tên Món</th>
+                    <th>Giá</th>
+                    <th>Loại Món</th>
+                    <th style="text-align:center;">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="monTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div id="monModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Thêm Món</h3>
+        <button class="modal-close" onclick="closeModal('monModal')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="monForm">
+          <input type="hidden" id="maMon" name="maMon">
+
+          <div class="form-group">
+            <label for="tenMon">Tên món <span style="color:red">*</span></label>
+            <input type="text" id="tenMon" name="tenMon" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="gia">Giá (₫)</label>
+            <input type="number" id="gia" name="gia" class="form-control" min="0" step="1000" required>
+          </div>
+
+          <div class="form-group">
+            <label for="loaiMon">Loại món</label>
+            <input type="text" id="loaiMon" name="loaiMon" class="form-control">
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('monModal')">Hủy</button>
+        <button class="btn btn-primary" onclick="saveMon()">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isEditMode = false;
+    document.addEventListener("DOMContentLoaded", loadMon);
+
+    // LOAD
+    async function loadMon() {
+      showLoading('monTable');
+      try {
+        const res = await apiGet('/Mon/get-all');
+        hideLoading('monTable');
+        if (!res || !res.success) return showAlert('Lỗi tải danh sách món!', 'danger');
+
+        const data = res.data;
+        const columns = [
+          { field: 'maMon' },
+          { field: 'tenMon' },
+          { field: 'gia', render: x => formatCurrency(x.gia) },
+          { field: 'loaiMon' }
+        ];
+        const actions = (x) => `
+          <div style="text-align:center;">
+            <button class="btn btn-warning btn-sm" onclick="editMon(${x.maMon})">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteMon(${x.maMon})">🗑️</button>
+          </div>
+        `;
+        renderTable('monTable', data, columns, actions);
+        searchTable('searchInput', 'monTable');
+      } catch (err) {
+        hideLoading('monTable');
+        showAlert('Lỗi khi tải dữ liệu: ' + err.message, 'danger');
+      }
+    }
+
+    // MỞ MODAL
+    function openAddModal() {
+      isEditMode = false;
+      resetForm('monForm');
+      document.getElementById('modalTitle').textContent = 'Thêm Món';
+      openModal('monModal');
+    }
+
+    // SỬA
+    async function editMon(id) {
+      try {
+        const res = await apiGet('/Mon/get-all');
+        if (res && res.success) {
+          const mon = res.data.find(x => x.maMon === id);
+          if (mon) {
+            isEditMode = true;
+            fillForm('monForm', mon);
+            document.getElementById('modalTitle').textContent = 'Sửa Món';
+            openModal('monModal');
+          }
+        }
+      } catch {
+        showAlert('Lỗi khi tải dữ liệu món!', 'danger');
+      }
+    }
+
+    // LƯU
+    async function saveMon() {
+      const data = getFormData('monForm');
+      if (!data.tenMon || !data.gia) return showAlert('Vui lòng nhập đầy đủ thông tin!', 'warning');
+
+      try {
+        if (isEditMode) {
+          await apiPut('/Mon/update', data);
+          showAlert('Cập nhật món thành công!', 'success');
+        } else {
+          await apiPost('/Mon/add', data);
+          showAlert('Thêm món thành công!', 'success');
+        }
+        closeModal('monModal');
+        loadMon();
+      } catch (err) {
+        showAlert('Lỗi khi lưu món: ' + err.message, 'danger');
+      }
+    }
+
+    // XÓA
+    async function deleteMon(id) {
+      if (!confirmDelete('Bạn có chắc muốn xóa món này?')) return;
+      try {
+        await apiDelete(`/Mon/delete/${id}`);
+        showAlert('Xóa món thành công!', 'success');
+        loadMon();
+      } catch (err) {
+        showAlert('Lỗi khi xóa món: ' + err.message, 'danger');
+      }
+    }
+  </script>
+</body>
+</html>

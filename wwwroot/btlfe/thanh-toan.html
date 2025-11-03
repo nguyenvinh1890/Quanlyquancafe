@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Thanh toán - Quán Cafe</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js"></script>
+  <script src="js/roles.js"></script>
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">☕</div>
+        <h2>CAFE MANAGER</h2>
+      </div>
+      <ul class="sidebar-menu"></ul>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left"><h1>💰 Quản lý Thanh toán</h1></div>
+        <div class="header-right">
+          <div class="user-info">
+            <div id="userAvatar" class="user-avatar">A</div>
+            <div class="user-details">
+              <div id="userName" class="user-name">Admin</div>
+              <div id="userRole" class="user-role">Quản lý</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+
+        <!-- Thống kê -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-icon green">💵</div>
+            <div class="stat-details">
+              <h4 id="totalCash">0đ</h4>
+              <p>Tiền mặt</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">💳</div>
+            <div class="stat-details">
+              <h4 id="totalCard">0đ</h4>
+              <p>Chuyển khoản</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">📱</div>
+            <div class="stat-details">
+              <h4 id="totalEwallet">0đ</h4>
+              <p>Ví điện tử</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danh sách -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Danh sách Thanh toán</h3>
+            <div class="action-buttons">
+              <button class="btn btn-success" onclick="openAddModal()">➕ Thêm thanh toán</button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="action-bar">
+              <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm thanh toán...">
+                <span class="search-icon">🔍</span>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Mã TT</th>
+                    <th>Mã HĐ</th>
+                    <th>Phương thức</th>
+                    <th>Số tiền</th>
+                    <th>Thu bởi</th>
+                    <th>Trả lúc</th>
+                    <th style="text-align:center;">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="thanhToanTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div id="thanhToanModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Thêm Thanh toán</h3>
+        <button class="modal-close" onclick="closeModal('thanhToanModal')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="thanhToanForm">
+          <input type="hidden" id="maTT" name="maTT">
+
+          <div class="form-group">
+            <label for="maHD">Hóa đơn <span style="color:red">*</span></label>
+            <select id="maHD" name="maHD" class="form-control" required>
+              <option value="">-- Chọn hóa đơn --</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phuongThuc">Phương thức <span style="color:red">*</span></label>
+              <select id="phuongThuc" name="phuongThuc" class="form-control" required>
+                <option value="Tiền mặt">Tiền mặt</option>
+                <option value="Chuyển khoản">Chuyển khoản</option>
+                <option value="Ví điện tử">Ví điện tử</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="soTien">Số tiền (₫) <span style="color:red">*</span></label>
+              <input type="number" id="soTien" name="soTien" class="form-control" min="0" step="1000" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="thuBoi">Thu bởi</label>
+            <select id="thuBoi" name="thuBoi" class="form-control">
+              <option value="">-- Chọn nhân viên --</option>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('thanhToanModal')">Hủy</button>
+        <button class="btn btn-primary" onclick="saveThanhToan()">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isEditMode = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadDropdowns();
+      loadThanhToan();
+    });
+
+    // LOAD DROPDOWNS
+    async function loadDropdowns() {
+      try {
+        const hd = await apiGet('/HoaDon/get-all');
+        const nv = await apiGet('/NguoiDung/get-all');
+
+        const selHD = document.getElementById('maHD');
+        const selNV = document.getElementById('thuBoi');
+
+        if (hd?.success) {
+          hd.data.forEach(x => {
+            const o = document.createElement('option');
+            o.value = x.maHD;
+            o.textContent = `Hóa đơn #${x.maHD} - ${formatCurrency(x.tongTien)}`;
+            selHD.appendChild(o);
+          });
+        }
+
+        if (nv?.success) {
+          nv.data.forEach(x => {
+            const o = document.createElement('option');
+            o.value = x.maND;
+            o.textContent = x.hoTen;
+            selNV.appendChild(o);
+          });
+        }
+      } catch {
+        showAlert('Lỗi khi tải danh sách hóa đơn / nhân viên!', 'danger');
+      }
+    }
+
+    // LOAD
+    async function loadThanhToan() {
+      showLoading('thanhToanTable');
+      try {
+        const res = await apiGet('/ThanhToan/get-all');
+        hideLoading('thanhToanTable');
+        if (!res || !res.success) return showAlert('Lỗi tải danh sách thanh toán!', 'danger');
+
+        const data = res.data;
+
+        const columns = [
+          { field: 'maTT' },
+          { field: 'maHD' },
+          { field: 'phuongThuc' },
+          { field: 'soTien', render: x => `<b>${formatCurrency(x.soTien)}</b>` },
+          { field: 'thuBoiTen' },
+          { field: 'traLuc', render: x => formatDateTime(x.traLuc) }
+        ];
+
+        const actions = (x) => `
+          <div style="text-align:center;">
+            <button class="btn btn-warning btn-sm" onclick="editThanhToan(${x.maTT})">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteThanhToan(${x.maTT})">🗑️</button>
+          </div>
+        `;
+        renderTable('thanhToanTable', data, columns, actions);
+        searchTable('searchInput', 'thanhToanTable');
+        loadStats(data);
+      } catch (err) {
+        hideLoading('thanhToanTable');
+        showAlert('Lỗi khi tải dữ liệu: ' + err.message, 'danger');
+      }
+    }
+
+    // LOAD STATS
+    function loadStats(data) {
+      let cash = 0, card = 0, ewallet = 0;
+      data.forEach(x => {
+        if (x.phuongThuc === 'Tiền mặt') cash += x.soTien;
+        else if (x.phuongThuc === 'Chuyển khoản') card += x.soTien;
+        else ewallet += x.soTien;
+      });
+      document.getElementById('totalCash').textContent = formatCurrency(cash);
+      document.getElementById('totalCard').textContent = formatCurrency(card);
+      document.getElementById('totalEwallet').textContent = formatCurrency(ewallet);
+    }
+
+    // MỞ MODAL
+    function openAddModal() {
+      isEditMode = false;
+      resetForm('thanhToanForm');
+      document.getElementById('modalTitle').textContent = 'Thêm Thanh toán';
+      openModal('thanhToanModal');
+    }
+
+    // SỬA
+    async function editThanhToan(id) {
+      try {
+        const res = await apiGet('/ThanhToan/get-all');
+        if (res && res.success) {
+          const item = res.data.find(x => x.maTT === id);
+          if (item) {
+            isEditMode = true;
+            fillForm('thanhToanForm', item);
+            document.getElementById('modalTitle').textContent = 'Sửa Thanh toán';
+            openModal('thanhToanModal');
+          }
+        }
+      } catch {
+        showAlert('Lỗi khi tải dữ liệu thanh toán!', 'danger');
+      }
+    }
+
+    // LƯU
+    async function saveThanhToan() {
+      const data = getFormData('thanhToanForm');
+      if (!data.maHD || !data.phuongThuc || !data.soTien) return showAlert('Vui lòng nhập đủ thông tin!', 'warning');
+
+      try {
+        if (isEditMode) {
+          await apiPut('/ThanhToan/update', data);
+          showAlert('Cập nhật thanh toán thành công!', 'success');
+        } else {
+          await apiPost('/ThanhToan/add', data);
+          showAlert('Thêm thanh toán thành công!', 'success');
+        }
+        closeModal('thanhToanModal');
+        loadThanhToan();
+      } catch (err) {
+        showAlert('Lỗi khi lưu thanh toán: ' + err.message, 'danger');
+      }
+    }
+
+    // XÓA
+    async function deleteThanhToan(id) {
+      if (!confirmDelete('Bạn có chắc muốn xóa thanh toán này?')) return;
+      try {
+        await apiDelete(`/ThanhToan/delete/${id}`);
+        showAlert('Xóa thanh toán thành công!', 'success');
+        loadThanhToan();
+      } catch (err) {
+        showAlert('Lỗi khi xóa thanh toán: ' + err.message, 'danger');
+      }
+    }
+  </script>
+</body>
+</html>
