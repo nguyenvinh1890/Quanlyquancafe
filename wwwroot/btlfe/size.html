@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Size món - Quán Cafe</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js"></script>
+  <script src="js/roles.js"></script>
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">☕</div>
+        <h2>CAFE MANAGER</h2>
+      </div>
+      <ul class="sidebar-menu"></ul>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left"><h1>📏 Quản lý Size món</h1></div>
+        <div class="header-right">
+          <div class="user-info">
+            <div id="userAvatar" class="user-avatar">A</div>
+            <div class="user-details">
+              <div id="userName" class="user-name">Admin</div>
+              <div id="userRole" class="user-role">Quản lý</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Danh sách Size món</h3>
+            <div class="action-buttons">
+              <button class="btn btn-success" onclick="openAddModal()">➕ Thêm size</button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="action-bar">
+              <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm size...">
+                <span class="search-icon">🔍</span>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Mã Size</th>
+                    <th>Tên Món</th>
+                    <th>Tên Size</th>
+                    <th>Giá</th>
+                    <th style="text-align:center;">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="sizeTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div id="sizeModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Thêm Size món</h3>
+        <button class="modal-close" onclick="closeModal('sizeModal')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="sizeForm">
+          <input type="hidden" id="maSize" name="maSize">
+
+          <div class="form-group">
+            <label for="maMon">Món <span style="color:red">*</span></label>
+            <select id="maMon" name="maMon" class="form-control" required>
+              <option value="">-- Chọn món --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="tenSize">Tên Size <span style="color:red">*</span></label>
+            <input type="text" id="tenSize" name="tenSize" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="gia">Giá (₫) <span style="color:red">*</span></label>
+            <input type="number" id="gia" name="gia" class="form-control" min="0" step="1000" required>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('sizeModal')">Hủy</button>
+        <button class="btn btn-primary" onclick="saveSize()">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isEditMode = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadMonDropdown();
+      loadSize();
+    });
+
+    // LOAD
+    async function loadSize() {
+      showLoading('sizeTable');
+      try {
+        const res = await apiGet('/Size/get-all');
+        hideLoading('sizeTable');
+        if (!res || !res.success) return showAlert('Lỗi tải danh sách size!', 'danger');
+
+        const data = res.data;
+        const columns = [
+          { field: 'maSize' },
+          { field: 'tenMon' },
+          { field: 'tenSize' },
+          { field: 'gia', render: x => formatCurrency(x.gia) }
+        ];
+        const actions = (x) => `
+          <div style="text-align:center;">
+            <button class="btn btn-warning btn-sm" onclick="editSize(${x.maSize})">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSize(${x.maSize})">🗑️</button>
+          </div>
+        `;
+        renderTable('sizeTable', data, columns, actions);
+        searchTable('searchInput', 'sizeTable');
+      } catch (err) {
+        hideLoading('sizeTable');
+        showAlert('Lỗi khi tải dữ liệu: ' + err.message, 'danger');
+      }
+    }
+
+    // MỞ MODAL
+    function openAddModal() {
+      isEditMode = false;
+      resetForm('sizeForm');
+      document.getElementById('modalTitle').textContent = 'Thêm Size món';
+      openModal('sizeModal');
+    }
+
+    // LOAD MON DROPDOWN
+    async function loadMonDropdown() {
+      try {
+        const res = await apiGet('/Mon/get-all');
+        if (res && res.success) {
+          const select = document.getElementById('maMon');
+          res.data.forEach(mon => {
+            const opt = document.createElement('option');
+            opt.value = mon.maMon;
+            opt.textContent = mon.tenMon;
+            select.appendChild(opt);
+          });
+        }
+      } catch {
+        showAlert('Lỗi tải danh sách món!', 'danger');
+      }
+    }
+
+    // SỬA
+    async function editSize(id) {
+      try {
+        const res = await apiGet('/Size/get-all');
+        if (res && res.success) {
+          const s = res.data.find(x => x.maSize === id);
+          if (s) {
+            isEditMode = true;
+            fillForm('sizeForm', s);
+            document.getElementById('modalTitle').textContent = 'Sửa Size món';
+            openModal('sizeModal');
+          }
+        }
+      } catch {
+        showAlert('Lỗi khi tải size!', 'danger');
+      }
+    }
+
+    // LƯU
+    async function saveSize() {
+      const data = getFormData('sizeForm');
+      if (!data.maMon || !data.tenSize || !data.gia) return showAlert('Vui lòng nhập đủ thông tin!', 'warning');
+
+      try {
+        if (isEditMode) {
+          await apiPut('/Size/update', data);
+          showAlert('Cập nhật Size thành công!', 'success');
+        } else {
+          await apiPost('/Size/add', data);
+          showAlert('Thêm Size thành công!', 'success');
+        }
+        closeModal('sizeModal');
+        loadSize();
+      } catch (err) {
+        showAlert('Lỗi khi lưu Size: ' + err.message, 'danger');
+      }
+    }
+
+    // XÓA
+    async function deleteSize(id) {
+      if (!confirmDelete('Bạn có chắc muốn xóa Size này?')) return;
+      try {
+        await apiDelete(`/Size/delete/${id}`);
+        showAlert('Xóa Size thành công!', 'success');
+        loadSize();
+      } catch (err) {
+        showAlert('Lỗi khi xóa Size: ' + err.message, 'danger');
+      }
+    }
+  </script>
+</body>
+</html>
