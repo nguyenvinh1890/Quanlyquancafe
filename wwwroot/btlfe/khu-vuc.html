@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Khu vực - Quán Cafe</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js"></script>
+  <script src="js/roles.js"></script>
+</head>
+
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">☕</div>
+        <h2>CAFE MANAGER</h2>
+      </div>
+      <ul class="sidebar-menu"></ul>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left"><h1>📍 Quản lý Khu vực</h1></div>
+        <div class="header-right">
+          <div class="user-info">
+            <div id="userAvatar" class="user-avatar">A</div>
+            <div class="user-details">
+              <div id="userName" class="user-name">Admin</div>
+              <div id="userRole" class="user-role">Quản lý</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Danh sách khu vực</h3>
+            <div class="action-buttons">
+              <button class="btn btn-success" onclick="openAddModal()">➕ Thêm khu vực</button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="action-bar">
+              <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm khu vực...">
+                <span class="search-icon">🔍</span>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Mã KV</th>
+                    <th>Tên khu vực</th>
+                    <th>Mô tả</th>
+                    <th style="text-align:center;">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="khuVucTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div id="khuVucModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Thêm khu vực</h3>
+        <button class="modal-close" onclick="closeModal('khuVucModal')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="khuVucForm">
+          <input type="hidden" id="maKV" name="maKV">
+          <div class="form-group">
+            <label for="tenKV">Tên khu vực <span style="color:red">*</span></label>
+            <input type="text" id="tenKV" name="tenKV" required class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="moTa">Mô tả</label>
+            <textarea id="moTa" name="moTa" class="form-control" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('khuVucModal')">Hủy</button>
+        <button class="btn btn-primary" onclick="saveKhuVuc()">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isEditMode = false;
+    document.addEventListener("DOMContentLoaded", loadKhuVuc);
+
+    // LOAD
+    async function loadKhuVuc() {
+      showLoading('khuVucTable');
+      try {
+        const res = await apiGet('/KhuVuc/get-all');
+        hideLoading('khuVucTable');
+        if (!res || !res.success) return showAlert("Lỗi tải danh sách khu vực!", "danger");
+
+        const data = res.data;
+        const columns = [
+          { field: 'maKV' },
+          { field: 'tenKV' },
+          { field: 'moTa' }
+        ];
+        const actions = (x) => `
+          <div style="text-align:center;">
+            <button class="btn btn-warning btn-sm" onclick="editKhuVuc(${x.maKV})">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteKhuVuc(${x.maKV})">🗑️</button>
+          </div>
+        `;
+        renderTable('khuVucTable', data, columns, actions);
+        searchTable('searchInput', 'khuVucTable');
+      } catch (err) {
+        hideLoading('khuVucTable');
+        showAlert("Lỗi khi tải dữ liệu: " + err.message, "danger");
+      }
+    }
+
+    // MỞ MODAL
+    function openAddModal() {
+      isEditMode = false;
+      resetForm('khuVucForm');
+      document.getElementById('modalTitle').textContent = 'Thêm khu vực';
+      openModal('khuVucModal');
+    }
+
+    // SỬA
+    async function editKhuVuc(id) {
+      try {
+        const res = await apiGet('/KhuVuc/get-all');
+        if (res?.success) {
+          const kv = res.data.find(x => x.maKV === id);
+          if (kv) {
+            isEditMode = true;
+            fillForm('khuVucForm', kv);
+            document.getElementById('modalTitle').textContent = 'Sửa khu vực';
+            openModal('khuVucModal');
+          } else showAlert('Không tìm thấy khu vực!', 'warning');
+        }
+      } catch (err) {
+        showAlert("Lỗi khi tải dữ liệu khu vực!", "danger");
+      }
+    }
+
+    // LƯU
+    async function saveKhuVuc() {
+      const data = getFormData('khuVucForm');
+      if (!data.tenKV) return showAlert("Vui lòng nhập tên khu vực!", "warning");
+
+      try {
+        if (isEditMode) {
+          await apiPut('/KhuVuc/update', data);
+          showAlert("Cập nhật khu vực thành công!", "success");
+        } else {
+          await apiPost('/KhuVuc/add', data);
+          showAlert("Thêm khu vực thành công!", "success");
+        }
+        closeModal('khuVucModal');
+        loadKhuVuc();
+      } catch (err) {
+        showAlert("Lỗi khi lưu khu vực: " + err.message, "danger");
+      }
+    }
+
+    // XÓA
+    async function deleteKhuVuc(id) {
+      if (!confirmDelete("Bạn có chắc chắn muốn xóa khu vực này?")) return;
+      try {
+        await apiDelete(`/KhuVuc/delete/${id}`);
+        showAlert("Xóa khu vực thành công!", "success");
+        loadKhuVuc();
+      } catch (err) {
+        showAlert("Lỗi khi xóa khu vực: " + err.message, "danger");
+      }
+    }
+  </script>
+</body>
+</html>
