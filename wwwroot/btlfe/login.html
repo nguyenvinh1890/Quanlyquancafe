@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập - Quản lý Quán Cafe</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .loading-overlay.active {
+      display: flex;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-header">
+        <div class="logo">☕</div>
+        <h1>QUẢN LÝ QUÁN CAFE</h1>
+        <p>Đăng nhập để tiếp tục</p>
+      </div>
+
+```
+  <div id="alertContainer"></div>
+
+  <form id="loginForm">
+    <div class="form-group">
+      <label for="username">Tài khoản</label>
+      <input type="text" id="username" name="taiKhoan" class="form-control" placeholder="Nhập tài khoản" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Mật khẩu</label>
+      <input type="password" id="password" name="matKhau" class="form-control" placeholder="Nhập mật khẩu" required />
+    </div>
+
+    <div class="form-group">
+      <label for="vaiTro">Vai trò</label>
+      <select id="vaiTro" name="vaiTro" class="form-control" required>
+        <option value="">-- Chọn vai trò --</option>
+        <option value="1">Quản lý</option>
+        <option value="2">Thu ngân</option>
+        <option value="3">Phục vụ</option>
+        <option value="4">Pha chế</option>
+        <option value="5">Khách hàng</option>
+      </select>
+    </div>
+
+    <div class="form-group" style="display:flex;align-items:center;gap:6px;">
+      <input type="checkbox" id="rememberMe" />
+      <label for="rememberMe" style="font-size:14px;color:var(--text-light)">Ghi nhớ tài khoản</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width:100%">Đăng nhập</button>
+  </form>
+
+  <div style="text-align:center;margin-top:20px;color:var(--text-light);font-size:14px;">
+    <p>Phiên bản 1.1 - 2025</p>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- Loading overlay -->
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+  <script src="js/app.js"></script>
+
+  <script src="js/roles.js"></script>
+
+  <script>
+    const overlay = document.getElementById('loadingOverlay');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedUser = localStorage.getItem('savedUser');
+      if (savedUser) {
+        document.getElementById('username').value = savedUser;
+        document.getElementById('rememberMe').checked = true;
+      }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = getFormData('loginForm');
+
+      if (!formData.taiKhoan || !formData.matKhau) {
+        showAlert('Vui lòng nhập đầy đủ thông tin!', 'warning');
+        return;
+      }
+      if (!formData.vaiTro) {
+        showAlert('Vui lòng chọn vai trò đăng nhập!', 'warning');
+        return;
+      }
+
+      overlay.classList.add('active'); // hiển thị loading
+
+      try {
+        const res = await apiPost('/NguoiDung/login', formData);
+        overlay.classList.remove('active');
+
+        if (res && res.success) {
+          setAuthToken(res.token);
+          setUserInfo(res.user);
+          showAlert('Đăng nhập thành công!', 'success');
+
+          // Nếu chọn “Nhớ tài khoản”
+          if (document.getElementById('rememberMe').checked) {
+            localStorage.setItem('savedUser', formData.taiKhoan);
+          } else {
+            localStorage.removeItem('savedUser');
+          }
+
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 800);
+        } else {
+          showAlert(res.message || 'Sai tài khoản hoặc mật khẩu!', 'danger');
+        }
+      } catch (err) {
+        overlay.classList.remove('active');
+        console.error('Lỗi đăng nhập:', err);
+        showAlert('Lỗi khi kết nối đến máy chủ!', 'danger');
+      }
+    });
+  </script>
+
+</body>
+</html>
