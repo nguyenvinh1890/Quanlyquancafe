@@ -1,9 +1,7 @@
-// ========================================
+// 
 // QUẢN LÝ QUÁN CAFE - JAVASCRIPT
-// ========================================
+// 
 
-
-//- Sử dụng LocalStorage để lưu thông tin đăng nhập
 
 // Địa chỉ API Backend 
 const API_BASE_URL = 'https://localhost:44390/api';
@@ -55,10 +53,9 @@ function formatTime(timeString) {
     return timeString.substring(0, 5);    // lấy 5 ký tự đầu: HH:mm
 }
 
-// ========================================
+//
 // MODAL FUNCTIONS - Các hàm mở/đóng popup
-// ========================================
-
+// 
 // Mở modal (popup) - truyền vào ID của modal
 
 function openModal(modalId) {
@@ -83,10 +80,10 @@ window.onclick = function(event) {
     }
 }
 
-// ========================================
+// 
 // API CALL FUNCTIONS - Các hàm gọi API
 // Sử dụng Fetch API để gọi backend
-// ========================================
+//
 
 // Hàm GET - Lấy dữ liệu từ server
 // Ví dụ: const data = await apiGet('/KhuVuc');
@@ -179,18 +176,20 @@ async function apiDelete(endpoint) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return true;  // trả về true nếu xóa thành công
+        // Backend trả về message (string) hoặc object, parse JSON
+        const result = await response.json();
+        return result;  // trả về response từ backend
     } catch (error) {
         console.error('API DELETE Error:', error);
         showAlert('Lỗi khi xóa dữ liệu: ' + error.message, 'danger');
-        return false;  // trả về false nếu lỗi
+        return null;  // trả về null nếu lỗi
     }
 }
 
-// ========================================
-// AUTHENTICATION - Xác thực người dùng
+// 
+//  - Xác thực người dùng
 // Sử dụng LocalStorage để lưu token và thông tin user
-// ========================================
+// 
 
 // Lấy token từ LocalStorage - dùng để xác thực với API
 function getAuthToken() {
@@ -229,9 +228,9 @@ function checkAuth() {
     }
 }
 
-// ========================================
+// 
 // TABLE FUNCTIONS - Các hàm xử lý bảng dữ liệu
-// ========================================
+// 
 
 // Tạo 1 hàng (row) cho bảng - hàm này để tái sử dụng
 function createTableRow(data, columns, actions) {
@@ -290,9 +289,9 @@ function renderTable(tableBodyId, data, columns, actions) {
     });
 }
 
-// ========================================
+// 
 // SEARCH & FILTER - Tìm kiếm trong bảng
-// ========================================
+// 
 
 // Hàm tìm kiếm real-time - gõ vào ô search là lọc ngay
 function searchTable(inputId, tableBodyId) {
@@ -321,9 +320,9 @@ function searchTable(inputId, tableBodyId) {
     });
 }
 
-// ========================================
+// 
 // FORM FUNCTIONS - Các hàm xử lý form
-// ========================================
+//
 
 // Lấy dữ liệu từ form thành object
 // Ví dụ: {tenKV: 'Tầng 1', moTa: 'Mô tả...'}
@@ -369,9 +368,9 @@ function confirmDelete(message = 'Bạn có chắc chắn muốn xóa?') {
     return confirm(message);  // confirm là hàm có sẵn của JavaScript
 }
 
-// ========================================
+// 
 // LOADING SPINNER
-// ========================================
+//
 
 function showLoading(containerId) {
     const container = document.getElementById(containerId);
@@ -387,10 +386,9 @@ function hideLoading(containerId) {
     }
 }
 
-// ========================================
+// 
 // MENU ACTIVE STATE - Đánh dấu menu đang active
-// ========================================
-
+//
 // Hàm tô sáng menu item đang active
 function setActiveMenu() {
     const currentPage = window.location.pathname.split('/').pop();  // lấy tên file hiện tại
@@ -443,9 +441,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ========================================
+// 
 // EXPORT FUNCTIONS - Xuất dữ liệu (chưa hoàn thiện)
-// ========================================
+//
 
 // Export dữ liệu ra Excel - cần thêm thư viện SheetJS (xlsx.js)
 function exportToExcel(data, filename = 'export.xlsx') {

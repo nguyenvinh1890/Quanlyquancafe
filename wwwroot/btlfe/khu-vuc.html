@@ -1,193 +1,292 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Khu vực - Quán Cafe</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/app.js"></script>
-  <script src="js/roles.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Khu vực - Quản lý Quán Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-  <div class="app-container">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo">☕</div>
-        <h2>CAFE MANAGER</h2>
-      </div>
-      <ul class="sidebar-menu"></ul>
-    </aside>
-
-    <main class="main-content">
-      <header class="header">
-        <div class="header-left"><h1>📍 Quản lý Khu vực</h1></div>
-        <div class="header-right">
-          <div class="user-info">
-            <div id="userAvatar" class="user-avatar">A</div>
-            <div class="user-details">
-              <div id="userName" class="user-name">Admin</div>
-              <div id="userRole" class="user-role">Quản lý</div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">☕</div>
+                <h2>CAFE MANAGER</h2>
             </div>
-          </div>
-        </div>
-      </header>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="index.html">
+                        <span class="icon">🏠</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="khu-vuc.html">
+                        <span class="icon">📍</span>
+                        <span>Khu vực</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="ban.html">
+                        <span class="icon">🪑</span>
+                        <span>Bàn</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="mon.html">
+                        <span class="icon">☕</span>
+                        <span>Món</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="size.html">
+                        <span class="icon">📏</span>
+                        <span>Size món</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="topping.html">
+                        <span class="icon">🧊</span>
+                        <span>Topping</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="don-hang.html">
+                        <span class="icon">📋</span>
+                        <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="hoa-don.html">
+                        <span class="icon">🧾</span>
+                        <span>Hóa đơn</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="thanh-toan.html">
+                        <span class="icon">💰</span>
+                        <span>Thanh toán</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="nguoi-dung.html">
+                        <span class="icon">👥</span>
+                        <span>Nhân viên</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="ca-lam.html">
+                        <span class="icon">🕐</span>
+                        <span>Ca làm</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="vai-tro.html">
+                        <span class="icon">🔑</span>
+                        <span>Vai trò</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" onclick="logout(); return false;">
+                        <span class="icon">🚪</span>
+                        <span>Đăng xuất</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
-      <div class="content">
-        <div id="alertContainer"></div>
-        <div class="card">
-          <div class="card-header">
-            <h3>Danh sách khu vực</h3>
-            <div class="action-buttons">
-              <button class="btn btn-success" onclick="openAddModal()">➕ Thêm khu vực</button>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Quản lý Khu vực</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">Admin</div>
+                            <div class="user-role" id="userRole">Quản lý</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <div id="alertContainer"></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Danh sách Khu vực</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Action Bar -->
+                        <div class="action-bar">
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="Tìm kiếm khu vực...">
+                                <span class="search-icon">🔍</span>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="openAddModal()">
+                                    ➕ Thêm khu vực
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã KV</th>
+                                        <th>Tên khu vực</th>
+                                        <th>Mô tả</th>
+                                        <th style="text-align: center;">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="khuVucTable">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; padding: 40px;">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-
-          <div class="card-body">
-            <div class="action-bar">
-              <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Tìm kiếm khu vực...">
-                <span class="search-icon">🔍</span>
-              </div>
-            </div>
-
-            <div class="table-container">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Mã KV</th>
-                    <th>Tên khu vực</th>
-                    <th>Mô tả</th>
-                    <th style="text-align:center;">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody id="khuVucTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Modal -->
-  <div id="khuVucModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modalTitle">Thêm khu vực</h3>
-        <button class="modal-close" onclick="closeModal('khuVucModal')">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <form id="khuVucForm">
-          <input type="hidden" id="maKV" name="maKV">
-          <div class="form-group">
-            <label for="tenKV">Tên khu vực <span style="color:red">*</span></label>
-            <input type="text" id="tenKV" name="tenKV" required class="form-control">
-          </div>
-          <div class="form-group">
-            <label for="moTa">Mô tả</label>
-            <textarea id="moTa" name="moTa" class="form-control" rows="3"></textarea>
-          </div>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal('khuVucModal')">Hủy</button>
-        <button class="btn btn-primary" onclick="saveKhuVuc()">Lưu</button>
-      </div>
+        </main>
     </div>
-  </div>
 
-  <script>
-    let isEditMode = false;
-    document.addEventListener("DOMContentLoaded", loadKhuVuc);
+    <!-- Modal Thêm/Sửa -->
+    <div id="khuVucModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Thêm khu vực</h3>
+                <button class="modal-close" onclick="closeModal('khuVucModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="khuVucForm">
+                    <input type="hidden" id="maKV" name="maKV">
 
-    // LOAD
-    async function loadKhuVuc() {
-      showLoading('khuVucTable');
-      try {
-        const res = await apiGet('/KhuVuc/get-all');
-        hideLoading('khuVucTable');
-        if (!res || !res.success) return showAlert("Lỗi tải danh sách khu vực!", "danger");
+                    <div class="form-group">
+                        <label for="tenKV">Tên khu vực <span style="color: red;">*</span></label>
+                        <input type="text" id="tenKV" name="tenKV" class="form-control" required>
+                    </div>
 
-        const data = res.data;
-        const columns = [
-          { field: 'maKV' },
-          { field: 'tenKV' },
-          { field: 'moTa' }
-        ];
-        const actions = (x) => `
-          <div style="text-align:center;">
-            <button class="btn btn-warning btn-sm" onclick="editKhuVuc(${x.maKV})">✏️</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteKhuVuc(${x.maKV})">🗑️</button>
-          </div>
-        `;
-        renderTable('khuVucTable', data, columns, actions);
-        searchTable('searchInput', 'khuVucTable');
-      } catch (err) {
-        hideLoading('khuVucTable');
-        showAlert("Lỗi khi tải dữ liệu: " + err.message, "danger");
-      }
-    }
+                    <div class="form-group">
+                        <label for="moTa">Mô tả</label>
+                        <textarea id="moTa" name="moTa" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('khuVucModal')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveKhuVuc()">Lưu</button>
+            </div>
+        </div>
+    </div>
 
-    // MỞ MODAL
-    function openAddModal() {
-      isEditMode = false;
-      resetForm('khuVucForm');
-      document.getElementById('modalTitle').textContent = 'Thêm khu vực';
-      openModal('khuVucModal');
-    }
+    <script src="js/app.js"></script>
+    <script src="js/roles.js"></script>
+    <script>
+        let isEditMode = false;
 
-    // SỬA
-    async function editKhuVuc(id) {
-      try {
-        const res = await apiGet('/KhuVuc/get-all');
-        if (res?.success) {
-          const kv = res.data.find(x => x.maKV === id);
-          if (kv) {
-            isEditMode = true;
-            fillForm('khuVucForm', kv);
-            document.getElementById('modalTitle').textContent = 'Sửa khu vực';
+        // Load danh sách khu vực
+        async function loadKhuVuc() {
+            try {
+                // Gọi API thực tế
+                const response = await apiGet('/KhuVuc/get-all');
+                // Backend trả về array trực tiếp, không có .data
+                const data = Array.isArray(response) ? response : [];
+
+                const columns = [
+                    { field: 'maKV' },
+                    { field: 'tenKV' },
+                    { field: 'moTa' }
+                ];
+
+                // Chỉ cho phép thêm mới khu vực (không sửa, không xóa)
+                const actions = () => `
+                        <div style="text-align: center; color: var(--text-light);">
+                            🔒 Cố định
+                        </div>
+                    `;
+
+                renderTable('khuVucTable', data, columns, actions);
+
+                // Enable search
+                searchTable('searchInput', 'khuVucTable');
+
+            } catch (error) {
+                console.error('Error loading khu vuc:', error);
+                showAlert('Lỗi khi tải danh sách khu vực: ' + error.message, 'danger');
+            }
+        }
+
+        // Mở modal thêm
+        function openAddModal() {
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Thêm khu vực';
+            resetForm('khuVucForm');
             openModal('khuVucModal');
-          } else showAlert('Không tìm thấy khu vực!', 'warning');
         }
-      } catch (err) {
-        showAlert("Lỗi khi tải dữ liệu khu vực!", "danger");
-      }
-    }
 
-    // LƯU
-    async function saveKhuVuc() {
-      const data = getFormData('khuVucForm');
-      if (!data.tenKV) return showAlert("Vui lòng nhập tên khu vực!", "warning");
-
-      try {
-        if (isEditMode) {
-          await apiPut('/KhuVuc/update', data);
-          showAlert("Cập nhật khu vực thành công!", "success");
-        } else {
-          await apiPost('/KhuVuc/add', data);
-          showAlert("Thêm khu vực thành công!", "success");
+        // Sửa khu vực
+        function editKhuVuc() {
+            showAlert('Khu vực là danh mục cố định, không hỗ trợ chỉnh sửa.', 'info');
         }
-        closeModal('khuVucModal');
-        loadKhuVuc();
-      } catch (err) {
-        showAlert("Lỗi khi lưu khu vực: " + err.message, "danger");
-      }
-    }
 
-    // XÓA
-    async function deleteKhuVuc(id) {
-      if (!confirmDelete("Bạn có chắc chắn muốn xóa khu vực này?")) return;
-      try {
-        await apiDelete(`/KhuVuc/delete/${id}`);
-        showAlert("Xóa khu vực thành công!", "success");
-        loadKhuVuc();
-      } catch (err) {
-        showAlert("Lỗi khi xóa khu vực: " + err.message, "danger");
-      }
-    }
-  </script>
+        // Lưu khu vực
+        async function saveKhuVuc() {
+            try {
+                const formData = getFormData('khuVucForm');
+
+                if (!formData.tenKV) {
+                    showAlert('Vui lòng nhập tên khu vực', 'warning');
+                    return;
+                }
+
+                // Luôn luôn thêm mới (không cho sửa/xóa)
+                try {
+                    // Chuẩn hóa dữ liệu gửi (mô tả -> số thứ tự, mặc định '0')
+                    const payload = {
+                        tenKV: formData.tenKV,
+                        moTa: (formData.moTa ?? '0').toString()
+                    };
+                    const result = await apiPost('/KhuVuc/add', payload);
+                    if (!result) return; // 
+                    showAlert(result.message || 'Thêm khu vực thành công!', 'success');
+                } catch (e) {
+                 
+                    console.error('Add khu vuc error:', e);
+                    showAlert('Lỗi khi thêm khu vực: ' + (e.message || ''), 'danger');
+                    return;
+                }
+
+                closeModal('khuVucModal');
+                loadKhuVuc();
+
+            } catch (error) {
+                console.error('Error saving khu vuc:', error);
+                showAlert('Lỗi khi lưu khu vực: ' + error.message, 'danger');
+            }
+        }
+
+        // Xóa khu vực
+        function deleteKhuVuc() {
+            showAlert('Khu vực là danh mục cố định, không hỗ trợ xóa.', 'info');
+        }
+
+        // Load data khi trang load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadKhuVuc();
+        });
+    </script>
 </body>
 </html>
+
