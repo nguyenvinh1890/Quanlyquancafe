@@ -1,227 +1,276 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Size món - Quán Cafe</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/app.js"></script>
-  <script src="js/roles.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Size món - Quản lý Quán Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-  <div class="app-container">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo">☕</div>
-        <h2>CAFE MANAGER</h2>
-      </div>
-      <ul class="sidebar-menu"></ul>
-    </aside>
-
-    <main class="main-content">
-      <header class="header">
-        <div class="header-left"><h1>📏 Quản lý Size món</h1></div>
-        <div class="header-right">
-          <div class="user-info">
-            <div id="userAvatar" class="user-avatar">A</div>
-            <div class="user-details">
-              <div id="userName" class="user-name">Admin</div>
-              <div id="userRole" class="user-role">Quản lý</div>
+    <div class="app-container">
+        <!-- Thanh bên (Sidebar) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">☕</div>
+                <h2>CAFE MANAGER</h2>
             </div>
-          </div>
-        </div>
-      </header>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="index.html"><span class="icon">🏠</span><span>Dashboard</span></a></li>
+                <li class="menu-item"><a href="khu-vuc.html"><span class="icon">📍</span><span>Khu vực</span></a></li>
+                <li class="menu-item"><a href="ban.html"><span class="icon">🪑</span><span>Bàn</span></a></li>
+                <li class="menu-item"><a href="mon.html"><span class="icon">☕</span><span>Món</span></a></li>
+                <li class="menu-item"><a href="size.html"><span class="icon">📏</span><span>Size món</span></a></li>
+                <li class="menu-item"><a href="topping.html"><span class="icon">🧊</span><span>Topping</span></a></li>
+                <li class="menu-item"><a href="don-hang.html"><span class="icon">📋</span><span>Đơn hàng</span></a></li>
+                <li class="menu-item"><a href="hoa-don.html"><span class="icon">🧾</span><span>Hóa đơn</span></a></li>
+                <li class="menu-item"><a href="thanh-toan.html"><span class="icon">💰</span><span>Thanh toán</span></a></li>
+                <li class="menu-item"><a href="nguoi-dung.html"><span class="icon">👥</span><span>Nhân viên</span></a></li>
+                <li class="menu-item"><a href="ca-lam.html"><span class="icon">🕐</span><span>Ca làm</span></a></li>
+                <li class="menu-item"><a href="vai-tro.html"><span class="icon">🔑</span><span>Vai trò</span></a></li>
+                <li class="menu-item"><a href="#" onclick="logout(); return false;"><span class="icon">🚪</span><span>Đăng xuất</span></a></li>
+            </ul>
+        </aside>
 
-      <div class="content">
-        <div id="alertContainer"></div>
+        <!-- Nội dung chính -->
+        <main class="main-content">
+            <!-- Thanh tiêu đề -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Quản lý Size món</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">Admin</div>
+                            <div class="user-role" id="userRole">Quản lý</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-        <div class="card">
-          <div class="card-header">
-            <h3>Danh sách Size món</h3>
-            <div class="action-buttons">
-              <button class="btn btn-success" onclick="openAddModal()">➕ Thêm size</button>
+            <!-- Khu vực nội dung -->
+            <div class="content">
+                <div id="alertContainer"></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Danh sách Size món</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Thanh công cụ hành động -->
+                        <div class="action-bar">
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="Tìm kiếm size...">
+                                <span class="search-icon">🔍</span>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="openAddModal()">➕ Thêm size</button>
+                            </div>
+                        </div>
+
+                        <!-- Bảng danh sách size -->
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã Size</th>
+                                        <th>Món</th>
+                                        <th>Tên Size</th>
+                                        <th>Giá</th>
+                                        <th style="text-align: center;">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sizeTable">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 40px;">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-
-          <div class="card-body">
-            <div class="action-bar">
-              <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Tìm kiếm size...">
-                <span class="search-icon">🔍</span>
-              </div>
-            </div>
-
-            <div class="table-container">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Mã Size</th>
-                    <th>Tên Món</th>
-                    <th>Tên Size</th>
-                    <th>Giá</th>
-                    <th style="text-align:center;">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody id="sizeTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Modal -->
-  <div id="sizeModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modalTitle">Thêm Size món</h3>
-        <button class="modal-close" onclick="closeModal('sizeModal')">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <form id="sizeForm">
-          <input type="hidden" id="maSize" name="maSize">
-
-          <div class="form-group">
-            <label for="maMon">Món <span style="color:red">*</span></label>
-            <select id="maMon" name="maMon" class="form-control" required>
-              <option value="">-- Chọn món --</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="tenSize">Tên Size <span style="color:red">*</span></label>
-            <input type="text" id="tenSize" name="tenSize" class="form-control" required>
-          </div>
-
-          <div class="form-group">
-            <label for="gia">Giá (₫) <span style="color:red">*</span></label>
-            <input type="number" id="gia" name="gia" class="form-control" min="0" step="1000" required>
-          </div>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal('sizeModal')">Hủy</button>
-        <button class="btn btn-primary" onclick="saveSize()">Lưu</button>
-      </div>
+        </main>
     </div>
-  </div>
 
-  <script>
-    let isEditMode = false;
+    <!-- Hộp thoại thêm/sửa size -->
+    <div id="sizeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Thêm size</h3>
+                <button class="modal-close" onclick="closeModal('sizeModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="sizeForm">
+                    <input type="hidden" id="maSize" name="maSize">
 
-    document.addEventListener("DOMContentLoaded", () => {
-      loadMonDropdown();
-      loadSize();
-    });
+                    <div class="form-group">
+                        <label for="maMon">Món <span style="color: red;">*</span></label>
+                        <select id="maMon" name="maMon" class="form-control" required>
+                            <option value="">-- Chọn món --</option>
+                        </select>
+                    </div>
 
-    // LOAD
-    async function loadSize() {
-      showLoading('sizeTable');
-      try {
-        const res = await apiGet('/Size/get-all');
-        hideLoading('sizeTable');
-        if (!res || !res.success) return showAlert('Lỗi tải danh sách size!', 'danger');
+                    <div class="form-group">
+                        <label for="tenSize">Tên size <span style="color: red;">*</span></label>
+                        <input type="text" id="tenSize" name="tenSize" class="form-control" required>
+                    </div>
 
-        const data = res.data;
-        const columns = [
-          { field: 'maSize' },
-          { field: 'tenMon' },
-          { field: 'tenSize' },
-          { field: 'gia', render: x => formatCurrency(x.gia) }
-        ];
-        const actions = (x) => `
-          <div style="text-align:center;">
-            <button class="btn btn-warning btn-sm" onclick="editSize(${x.maSize})">✏️</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteSize(${x.maSize})">🗑️</button>
-          </div>
-        `;
-        renderTable('sizeTable', data, columns, actions);
-        searchTable('searchInput', 'sizeTable');
-      } catch (err) {
-        hideLoading('sizeTable');
-        showAlert('Lỗi khi tải dữ liệu: ' + err.message, 'danger');
-      }
-    }
+                    <div class="form-group">
+                        <label for="gia">Giá <span style="color: red;">*</span></label>
+                        <input type="number" id="gia" name="gia" class="form-control" min="0" step="1000" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('sizeModal')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveSize()">Lưu</button>
+            </div>
+        </div>
+    </div>
 
-    // MỞ MODAL
-    function openAddModal() {
-      isEditMode = false;
-      resetForm('sizeForm');
-      document.getElementById('modalTitle').textContent = 'Thêm Size món';
-      openModal('sizeModal');
-    }
+    <script src="js/app.js"></script>
+    <script src="js/roles.js"></script>
+    <script>
+        let isEditMode = false;
+        let monMap = {}; // Biến lưu danh sách món theo dạng ánh xạ (mã món → tên món)
 
-    // LOAD MON DROPDOWN
-    async function loadMonDropdown() {
-      try {
-        const res = await apiGet('/Mon/get-all');
-        if (res && res.success) {
-          const select = document.getElementById('maMon');
-          res.data.forEach(mon => {
-            const opt = document.createElement('option');
-            opt.value = mon.maMon;
-            opt.textContent = mon.tenMon;
-            select.appendChild(opt);
-          });
+        // Tải danh sách món để hiển thị trong ô chọn (dropdown)
+        async function loadMonDropdown() {
+            try {
+                // Gọi API để lấy danh sách món
+                const response = await apiGet('/Mon/get-all');
+                const data = response.data || (Array.isArray(response) ? response : []);
+
+                const select = document.getElementById('maMon');
+                data.forEach(item => {
+                    monMap[item.maMon] = item.tenMon; // Lưu tên món tương ứng với mã món
+                    const option = document.createElement('option');
+                    option.value = item.maMon;
+                    option.textContent = item.tenMon;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Lỗi khi tải danh sách món:', error);
+            }
         }
-      } catch {
-        showAlert('Lỗi tải danh sách món!', 'danger');
-      }
-    }
 
-    // SỬA
-    async function editSize(id) {
-      try {
-        const res = await apiGet('/Size/get-all');
-        if (res && res.success) {
-          const s = res.data.find(x => x.maSize === id);
-          if (s) {
-            isEditMode = true;
-            fillForm('sizeForm', s);
-            document.getElementById('modalTitle').textContent = 'Sửa Size món';
+        // Tải danh sách size và hiển thị trong bảng
+        async function loadSize() {
+            try {
+                // Gọi API để lấy dữ liệu size
+                const response = await apiGet('/SizeMon/get-all');
+                const data = response.data || (Array.isArray(response) ? response : []);
+
+                // Cấu hình các cột trong bảng
+                const columns = [
+                    { field: 'maSize' },
+                    { field: 'maMon', render: (row) => monMap[row.maMon] || '' },
+                    { field: 'tenSize' },
+                    { field: 'gia', render: (row) => formatCurrency(row.gia) }
+                ];
+
+                // Các nút thao tác (Sửa / Xóa)
+                const actions = (data) => `
+                        <div style="text-align: center;">
+                            <button class="btn btn-sm btn-warning" onclick="editSize(${data.maSize})">✏️ Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteSize(${data.maSize})">🗑️ Xóa</button>
+                        </div>
+                    `;
+
+                // Hiển thị dữ liệu ra bảng
+                renderTable('sizeTable', data, columns, actions);
+                searchTable('searchInput', 'sizeTable'); // Kích hoạt chức năng tìm kiếm
+            } catch (error) {
+                console.error('Lỗi khi tải danh sách size:', error);
+                showAlert('Không thể tải danh sách size: ' + error.message, 'danger');
+            }
+        }
+
+        // Mở hộp thoại thêm mới
+        function openAddModal() {
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Thêm size';
+            resetForm('sizeForm');
             openModal('sizeModal');
-          }
         }
-      } catch {
-        showAlert('Lỗi khi tải size!', 'danger');
-      }
-    }
 
-    // LƯU
-    async function saveSize() {
-      const data = getFormData('sizeForm');
-      if (!data.maMon || !data.tenSize || !data.gia) return showAlert('Vui lòng nhập đủ thông tin!', 'warning');
+        // Sửa thông tin size
+        async function editSize(id) {
+            try {
+                // Gọi API để lấy danh sách size
+                const response = await apiGet('/SizeMon/get-all');
+                const allData = response.data || (Array.isArray(response) ? response : []);
+                const size = allData.find(item => item.maSize === id);
 
-      try {
-        if (isEditMode) {
-          await apiPut('/Size/update', data);
-          showAlert('Cập nhật Size thành công!', 'success');
-        } else {
-          await apiPost('/Size/add', data);
-          showAlert('Thêm Size thành công!', 'success');
+                if (size) {
+                    isEditMode = true;
+                    document.getElementById('modalTitle').textContent = 'Sửa size';
+                    fillForm('sizeForm', size); // Điền dữ liệu vào form
+                    openModal('sizeModal');
+                }
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu size:', error);
+                showAlert('Không thể tải thông tin size: ' + error.message, 'danger');
+            }
         }
-        closeModal('sizeModal');
-        loadSize();
-      } catch (err) {
-        showAlert('Lỗi khi lưu Size: ' + err.message, 'danger');
-      }
-    }
 
-    // XÓA
-    async function deleteSize(id) {
-      if (!confirmDelete('Bạn có chắc muốn xóa Size này?')) return;
-      try {
-        await apiDelete(`/Size/delete/${id}`);
-        showAlert('Xóa Size thành công!', 'success');
-        loadSize();
-      } catch (err) {
-        showAlert('Lỗi khi xóa Size: ' + err.message, 'danger');
-      }
-    }
-  </script>
+        // Lưu size (Thêm hoặc Cập nhật)
+        async function saveSize() {
+            try {
+                const formData = getFormData('sizeForm');
+
+                // Kiểm tra dữ liệu nhập
+                if (!formData.maMon || !formData.tenSize || !formData.gia) {
+                    showAlert('Vui lòng nhập đầy đủ thông tin bắt buộc!', 'warning');
+                    return;
+                }
+
+                let result;
+                if (isEditMode) {
+                    // Gọi API cập nhật
+                    result = await apiPut('/SizeMon/update', formData);
+                    showAlert(result.message || 'Cập nhật size thành công!', 'success');
+                } else {
+                    // Gọi API thêm mới
+                    result = await apiPost('/SizeMon/add', formData);
+                    showAlert(result.message || 'Thêm size thành công!', 'success');
+                }
+
+                closeModal('sizeModal');
+                loadSize(); // Tải lại danh sách sau khi thêm/sửa
+            } catch (error) {
+                console.error('Lỗi khi lưu size:', error);
+                showAlert('Không thể lưu size: ' + error.message, 'danger');
+            }
+        }
+
+        // Xóa size theo mã
+        async function deleteSize(id) {
+            if (!confirmDelete('Bạn có chắc chắn muốn xóa size này?')) {
+                return;
+            }
+
+            try {
+                // Gọi API xóa size
+                const result = await apiDelete(`/SizeMon/delete/${id}`);
+
+                showAlert(result.message || 'Xóa size thành công!', 'success');
+                loadSize(); // Cập nhật lại bảng
+            } catch (error) {
+                console.error('Lỗi khi xóa size:', error);
+                showAlert('Không thể xóa size: ' + error.message, 'danger');
+            }
+        }
+
+        // Khi trang được tải xong thì tự động nạp dữ liệu
+        document.addEventListener('DOMContentLoaded', function () {
+            loadMonDropdown();
+            loadSize();
+        });
+    </script>
 </body>
 </html>
