@@ -1,199 +1,308 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Topping - Quán Cafe</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/app.js"></script>
-  <script src="js/roles.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Topping - Quản lý Quán Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-  <div class="app-container">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo">☕</div>
-        <h2>CAFE MANAGER</h2>
-      </div>
-      <ul class="sidebar-menu"></ul>
-    </aside>
-
-    <main class="main-content">
-      <header class="header">
-        <div class="header-left"><h1>🧊 Quản lý Topping</h1></div>
-        <div class="header-right">
-          <div class="user-info">
-            <div id="userAvatar" class="user-avatar">A</div>
-            <div class="user-details">
-              <div id="userName" class="user-name">Admin</div>
-              <div id="userRole" class="user-role">Quản lý</div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">☕</div>
+                <h2>CAFE MANAGER</h2>
             </div>
-          </div>
-        </div>
-      </header>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="index.html">
+                        <span class="icon">🏠</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="khu-vuc.html">
+                        <span class="icon">📍</span>
+                        <span>Khu vực</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="ban.html">
+                        <span class="icon">🪑</span>
+                        <span>Bàn</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="mon.html">
+                        <span class="icon">☕</span>
+                        <span>Món</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="size.html">
+                        <span class="icon">📏</span>
+                        <span>Size món</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="topping.html">
+                        <span class="icon">🧊</span>
+                        <span>Topping</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="don-hang.html">
+                        <span class="icon">📋</span>
+                        <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="hoa-don.html">
+                        <span class="icon">🧾</span>
+                        <span>Hóa đơn</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="thanh-toan.html">
+                        <span class="icon">💰</span>
+                        <span>Thanh toán</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="nguoi-dung.html">
+                        <span class="icon">👥</span>
+                        <span>Nhân viên</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="ca-lam.html">
+                        <span class="icon">🕐</span>
+                        <span>Ca làm</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="vai-tro.html">
+                        <span class="icon">🔑</span>
+                        <span>Vai trò</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" onclick="logout(); return false;">
+                        <span class="icon">🚪</span>
+                        <span>Đăng xuất</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
-      <div class="content">
-        <div id="alertContainer"></div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Quản lý Topping</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">Admin</div>
+                            <div class="user-role" id="userRole">Quản lý</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-        <div class="card">
-          <div class="card-header">
-            <h3>Danh sách Topping</h3>
-            <div class="action-buttons">
-              <button class="btn btn-success" onclick="openAddModal()">➕ Thêm topping</button>
+            <!-- Content -->
+            <div class="content">
+                <div id="alertContainer"></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Danh sách Topping</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Action Bar -->
+                        <div class="action-bar">
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="Tìm kiếm topping...">
+                                <span class="search-icon">🔍</span>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="openAddModal()">
+                                    ➕ Thêm topping
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã Topping</th>
+                                        <th>Tên Topping</th>
+                                        <th>Giá</th>
+                                        <th style="text-align: center;">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="toppingTable">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; padding: 40px;">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-
-          <div class="card-body">
-            <div class="action-bar">
-              <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Tìm kiếm topping...">
-                <span class="search-icon">🔍</span>
-              </div>
-            </div>
-
-            <div class="table-container">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Mã topping</th>
-                    <th>Tên topping</th>
-                    <th>Giá</th>
-                    <th style="text-align:center;">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody id="toppingTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Modal -->
-  <div id="toppingModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modalTitle">Thêm topping</h3>
-        <button class="modal-close" onclick="closeModal('toppingModal')">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <form id="toppingForm">
-          <input type="hidden" id="maTopping" name="maTopping">
-
-          <div class="form-group">
-            <label for="tenTopping">Tên topping <span style="color:red">*</span></label>
-            <input type="text" id="tenTopping" name="tenTopping" class="form-control" required>
-          </div>
-
-          <div class="form-group">
-            <label for="gia">Giá (₫) <span style="color:red">*</span></label>
-            <input type="number" id="gia" name="gia" class="form-control" min="0" step="1000" required>
-          </div>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal('toppingModal')">Hủy</button>
-        <button class="btn btn-primary" onclick="saveTopping()">Lưu</button>
-      </div>
+        </main>
     </div>
-  </div>
 
-  <script>
-    let isEditMode = false;
+    <!-- Modal Thêm/Sửa -->
+    <div id="toppingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Thêm topping</h3>
+                <button class="modal-close" onclick="closeModal('toppingModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="toppingForm">
+                    <input type="hidden" id="maTopping" name="maTopping">
+                    
+                    <div class="form-group">
+                        <label for="tenTopping">Tên topping <span style="color: red;">*</span></label>
+                        <input type="text" id="tenTopping" name="tenTopping" class="form-control" required>
+                    </div>
 
-    document.addEventListener("DOMContentLoaded", () => {
-      loadTopping();
-    });
+                    <div class="form-group">
+                        <label for="gia">Giá <span style="color: red;">*</span></label>
+                        <input type="number" id="gia" name="gia" class="form-control" min="0" step="1000" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('toppingModal')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveTopping()">Lưu</button>
+            </div>
+        </div>
+    </div>
 
-    // LOAD
-    async function loadTopping() {
-      showLoading('toppingTable');
-      try {
-        const res = await apiGet('/Topping/get-all');
-        hideLoading('toppingTable');
-        if (!res || !res.success) return showAlert('Lỗi tải danh sách topping!', 'danger');
+    <script src="js/app.js"></script>
+    <script src="js/roles.js"></script>
+    <script>
+        let isEditMode = false;
 
-        const data = res.data;
-        const columns = [
-          { field: 'maTopping' },
-          { field: 'tenTopping' },
-          { field: 'gia', render: x => formatCurrency(x.gia) }
-        ];
-        const actions = (x) => `
-          <div style="text-align:center;">
-            <button class="btn btn-warning btn-sm" onclick="editTopping(${x.maTopping})">✏️</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteTopping(${x.maTopping})">🗑️</button>
-          </div>`;
-        renderTable('toppingTable', data, columns, actions);
-        searchTable('searchInput', 'toppingTable');
-      } catch (err) {
-        hideLoading('toppingTable');
-        showAlert('Lỗi khi tải dữ liệu: ' + err.message, 'danger');
-      }
-    }
+        // Load danh sách topping
+        async function loadTopping() {
+            try {
+                // Gọi API thực tế
+                const response = await apiGet('/Topping/get-all');
+                const data = response.data || (Array.isArray(response) ? response : []);
+                
+                const columns = [
+                    { field: 'maTopping' },
+                    { field: 'tenTopping' },
+                    { field: 'gia', render: (data) => formatCurrency(data.gia) }
+                ];
+                
+                const actions = (data) => `
+                    <div style="text-align: center;">
+                        <button class="btn btn-sm btn-warning" onclick="editTopping(${data.maTopping})">✏️ Sửa</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteTopping(${data.maTopping})">🗑️ Xóa</button>
+                    </div>
+                `;
+                
+                renderTable('toppingTable', data, columns, actions);
+                searchTable('searchInput', 'toppingTable');
+            } catch (error) {
+                console.error('Error loading topping:', error);
+                showAlert('Lỗi khi tải danh sách topping: ' + error.message, 'danger');
+            }
+        }
 
-    // MỞ MODAL
-    function openAddModal() {
-      isEditMode = false;
-      resetForm('toppingForm');
-      document.getElementById('modalTitle').textContent = 'Thêm topping';
-      openModal('toppingModal');
-    }
-
-    // SỬA
-    async function editTopping(id) {
-      try {
-        const res = await apiGet('/Topping/get-all');
-        if (res && res.success) {
-          const item = res.data.find(x => x.maTopping === id);
-          if (item) {
-            isEditMode = true;
-            fillForm('toppingForm', item);
-            document.getElementById('modalTitle').textContent = 'Sửa topping';
+        // Mở modal thêm
+        function openAddModal() {
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Thêm topping';
+            resetForm('toppingForm');
             openModal('toppingModal');
-          }
         }
-      } catch {
-        showAlert('Lỗi khi tải topping!', 'danger');
-      }
-    }
 
-    // LƯU
-    async function saveTopping() {
-      const data = getFormData('toppingForm');
-      if (!data.tenTopping || !data.gia)
-        return showAlert('Vui lòng nhập đủ thông tin!', 'warning');
-
-      try {
-        if (isEditMode) {
-          await apiPut('/Topping/update', data);
-          showAlert('Cập nhật topping thành công!', 'success');
-        } else {
-          await apiPost('/Topping/add', data);
-          showAlert('Thêm topping thành công!', 'success');
+        // Sửa topping
+        async function editTopping(id) {
+            try {
+                // Lấy dữ liệu từ API
+                const response = await apiGet('/Topping/get-all');
+                const allData = response.data || (Array.isArray(response) ? response : []);
+                const topping = allData.find(item => item.maTopping === id);
+                
+                if (topping) {
+                    isEditMode = true;
+                    document.getElementById('modalTitle').textContent = 'Sửa topping';
+                    fillForm('toppingForm', topping);
+                    openModal('toppingModal');
+                }
+            } catch (error) {
+                console.error('Error loading topping:', error);
+                showAlert('Lỗi khi tải thông tin topping: ' + error.message, 'danger');
+            }
         }
-        closeModal('toppingModal');
-        loadTopping();
-      } catch (err) {
-        showAlert('Lỗi khi lưu topping: ' + err.message, 'danger');
-      }
-    }
 
-    // XÓA
-    async function deleteTopping(id) {
-      if (!confirmDelete('Bạn có chắc muốn xóa topping này?')) return;
-      try {
-        await apiDelete(`/Topping/delete/${id}`);
-        showAlert('Xóa topping thành công!', 'success');
-        loadTopping();
-      } catch (err) {
-        showAlert('Lỗi khi xóa topping: ' + err.message, 'danger');
-      }
-    }
-  </script>
+        // Lưu topping
+        async function saveTopping() {
+            try {
+                const formData = getFormData('toppingForm');
+                
+                if (!formData.tenTopping || !formData.gia) {
+                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
+                    return;
+                }
+                
+                let result;
+                if (isEditMode) {
+                    // Gọi API PUT
+                    result = await apiPut('/Topping/update', formData);
+                    showAlert(result.message || 'Cập nhật topping thành công!', 'success');
+                } else {
+                    // Gọi API POST
+                    result = await apiPost('/Topping/add', formData);
+                    showAlert(result.message || 'Thêm topping thành công!', 'success');
+                }
+                
+                closeModal('toppingModal');
+                loadTopping();
+            } catch (error) {
+                console.error('Error saving topping:', error);
+                showAlert('Lỗi khi lưu topping: ' + error.message, 'danger');
+            }
+        }
+
+        // Xóa topping
+        async function deleteTopping(id) {
+            if (!confirmDelete('Bạn có chắc chắn muốn xóa topping này?')) {
+                return;
+            }
+            
+            try {
+                // Gọi API DELETE
+                const result = await apiDelete(`/Topping/delete/${id}`);
+                
+                showAlert(result.message || 'Xóa topping thành công!', 'success');
+                loadTopping();
+            } catch (error) {
+                console.error('Error deleting topping:', error);
+                showAlert('Lỗi khi xóa topping: ' + error.message, 'danger');
+            }
+        }
+
+        // Load data khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTopping();
+        });
+    </script>
 </body>
 </html>
