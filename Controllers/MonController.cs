@@ -51,5 +51,11 @@ namespace QLCF.Controllers
             var msg = _monBUS.Delete(id);
             return Ok(new { message = msg });
         }
+        [HttpGet("check-sold/{id}")]
+        public IActionResult CheckSold(int id)
+        {
+            var hasSold = _monBUS.CheckHasSold(id);
+            return Ok(new { hasSold = hasSold });
+        }
     }
 }
