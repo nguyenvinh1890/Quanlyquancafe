@@ -43,5 +43,12 @@ namespace QLCF.Controllers
             var msg = _bus.Delete(maDH, maMon);
             return Ok(msg);
         }
+        [HttpGet("get-by-donhang/{maDH}")]
+        public IActionResult GetByDonHang(int maDH)
+        {
+            var result = _bus.GetByDonHang(maDH);
+            if (!result.Item1) return BadRequest(result.Item2);
+            return Ok(result.Item3);
+        }
     }
 }

@@ -168,7 +168,7 @@
                 // Cấu hình các cột trong bảng
                 const columns = [
                     { field: 'maSize' },
-                    { field: 'maMon', render: (row) => monMap[row.maMon] || '' },
+                    { field: 'tenMon', render: (row) => row.tenMon || monMap[row.maMon] || '' }, // Ưu tiên tenMon từ backend, fallback về monMap
                     { field: 'tenSize' },
                     { field: 'gia', render: (row) => formatCurrency(row.gia) }
                 ];

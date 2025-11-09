@@ -33,7 +33,8 @@ namespace QLCF.BUS
                         MaSize = (int)r["ma_size"],
                         MaMon = (int)r["ma_mon"],
                         TenSize = r["ten_size"].ToString() ?? "",
-                        Gia = Convert.ToDecimal(r["gia"])
+                        Gia = Convert.ToDecimal(r["gia"]),
+                        TenMon = r["ten_mon"]?.ToString() ?? "" // Map tên món từ database
                     });
                 }
 

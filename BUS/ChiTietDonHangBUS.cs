@@ -20,7 +20,8 @@ namespace QLCF.BUS
             try
             {
                 string sql = @"
-                    SELECT c.ma_dh, c.ma_mon, c.ma_size, c.so_luong, c.don_gia, c.thanh_tien,
+                    SELECT c.ma_dh, c.ma_mon, c.ma_size, c.so_luong, c.don_gia, 
+                           (c.so_luong * c.don_gia) AS thanh_tien,
                            m.ten_mon, s.ten_size
                     FROM chi_tiet_don c
                     JOIN mon m ON c.ma_mon = m.ma_mon
@@ -118,6 +119,50 @@ namespace QLCF.BUS
             catch (Exception ex)
             {
                 return "Lỗi khi xóa chi tiết đơn hàng: " + ex.Message;
+            }
+        }
+
+        public (bool, string, List<ChiTietDonHang>) GetByDonHang(int maDH)
+        {
+            try
+            {
+                string sql = @"
+                    SELECT c.ma_dh, c.ma_mon, c.ma_size, c.so_luong, c.don_gia, 
+                           (c.so_luong * c.don_gia) AS thanh_tien,
+                           m.ten_mon, s.ten_size
+                    FROM chi_tiet_don c
+                    JOIN mon m ON c.ma_mon = m.ma_mon
+                    LEFT JOIN size_mon s ON c.ma_size = s.ma_size
+                    WHERE c.ma_dh = @ma_dh";
+
+                var param = new Dictionary<string, object>
+                {
+                    {"@ma_dh", maDH}
+                };
+
+                DataTable dt = _db.ExecuteQuery(sql, param);
+                var list = new List<ChiTietDonHang>();
+
+                foreach (DataRow r in dt.Rows)
+                {
+                    list.Add(new ChiTietDonHang
+                    {
+                        MaDH = (int)r["ma_dh"],
+                        MaMon = (int)r["ma_mon"],
+                        MaSize = r["ma_size"] == DBNull.Value ? null : (int?)r["ma_size"],
+                        SoLuong = (int)r["so_luong"],
+                        DonGia = Convert.ToDecimal(r["don_gia"]),
+                        ThanhTien = Convert.ToDecimal(r["thanh_tien"]),
+                        TenMon = r["ten_mon"].ToString() ?? "",
+                        TenSize = r["ten_size"]?.ToString() ?? ""
+                    });
+                }
+
+                return (true, $"Lấy {list.Count} chi tiết đơn hàng thành công", list);
+            }
+            catch (Exception ex)
+            {
+                return (false, "Lỗi khi lấy chi tiết đơn hàng: " + ex.Message, new List<ChiTietDonHang>());
             }
         }
     }
