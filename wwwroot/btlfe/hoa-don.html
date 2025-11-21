@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Hóa đơn - Quản lý Quán Cafe</title>
+    <title>Quản lý Hóa đơn - Quán Cafe</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,91 +14,11 @@
                 <div class="logo">☕</div>
                 <h2>CAFE MANAGER</h2>
             </div>
-            <ul class="sidebar-menu">
-                <li class="menu-item">
-                    <a href="index.html">
-                        <span class="icon">🏠</span>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="khu-vuc.html">
-                        <span class="icon">📍</span>
-                        <span>Khu vực</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ban.html">
-                        <span class="icon">🪑</span>
-                        <span>Bàn</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="mon.html">
-                        <span class="icon">☕</span>
-                        <span>Món</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="size.html">
-                        <span class="icon">📏</span>
-                        <span>Size món</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="topping.html">
-                        <span class="icon">🧊</span>
-                        <span>Topping</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="don-hang.html">
-                        <span class="icon">📋</span>
-                        <span>Đơn hàng</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="hoa-don.html">
-                        <span class="icon">🧾</span>
-                        <span>Hóa đơn</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="thanh-toan.html">
-                        <span class="icon">💰</span>
-                        <span>Thanh toán</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="nguoi-dung.html">
-                        <span class="icon">👥</span>
-                        <span>Nhân viên</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ca-lam.html">
-                        <span class="icon">🕐</span>
-                        <span>Ca làm</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="vai-tro.html">
-                        <span class="icon">🔑</span>
-                        <span>Vai trò</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" onclick="logout(); return false;">
-                        <span class="icon">🚪</span>
-                        <span>Đăng xuất</span>
-                    </a>
-                </li>
-            </ul>
+            <ul class="sidebar-menu"></ul>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main content -->
         <main class="main-content">
-            <!-- Header -->
             <header class="header">
                 <div class="header-left">
                     <h1>Quản lý Hóa đơn</h1>
@@ -114,7 +34,6 @@
                 </div>
             </header>
 
-            <!-- Content -->
             <div class="content">
                 <div id="alertContainer"></div>
 
@@ -122,39 +41,34 @@
                     <div class="card-header">
                         <h3>Danh sách Hóa đơn</h3>
                     </div>
+
                     <div class="card-body">
-                        <!-- Action Bar -->
                         <div class="action-bar">
                             <div class="search-box">
                                 <input type="text" id="searchInput" placeholder="Tìm kiếm hóa đơn...">
                                 <span class="search-icon">🔍</span>
                             </div>
                             <div class="action-buttons">
-                                <button class="btn btn-primary" onclick="openAddModal()">
-                                    ➕ Tạo hóa đơn
-                                </button>
+                                <button class="btn btn-primary" onclick="openAddModal()">➕ Thêm hóa đơn</button>
                             </div>
                         </div>
 
-                        <!-- Table -->
                         <div class="table-container">
                             <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Mã HĐ</th>
-                                        <th>Mã ĐH</th>
-                                        <th>Tạm tính</th>
-                                        <th>Giảm giá</th>
-                                        <th>Thuế</th>
+                                        <th>Mã Bàn</th>
+                                        <th>Tên Nhân viên</th>
+                                        <th>Ngày lập</th>
                                         <th>Tổng tiền</th>
                                         <th>Trạng thái</th>
-                                        <th>Tạo lúc</th>
-                                        <th style="text-align: center;">Thao tác</th>
+                                        <th style="text-align:center;">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody id="hoaDonTable">
                                     <tr>
-                                        <td colspan="9" style="text-align: center; padding: 40px;">
+                                        <td colspan="7" style="text-align:center;padding:40px;">
                                             <div class="spinner"></div>
                                         </td>
                                     </tr>
@@ -167,57 +81,50 @@
         </main>
     </div>
 
-    <!-- Modal Thêm/Sửa -->
+    <!-- Modal -->
     <div id="hoaDonModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Tạo hóa đơn</h3>
+                <h3 id="modalTitle">Thêm hóa đơn</h3>
                 <button class="modal-close" onclick="closeModal('hoaDonModal')">&times;</button>
             </div>
+
             <div class="modal-body">
                 <form id="hoaDonForm">
                     <input type="hidden" id="maHD" name="maHD">
-                    
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="maBan">Mã bàn</label>
+                            <input type="text" id="maBan" name="maBan" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tenNV">Tên nhân viên</label>
+                            <input type="text" id="tenNV" name="tenNV" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ngayLap">Ngày lập</label>
+                            <input type="date" id="ngayLap" name="ngayLap" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tongTien">Tổng tiền</label>
+                            <input type="number" id="tongTien" name="tongTien" class="form-control" required>
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label for="maDH">Mã đơn hàng <span style="color: red;">*</span></label>
-                        <select id="maDH" name="maDH" class="form-control" required>
-                            <option value="">-- Chọn đơn hàng --</option>
+                        <label for="trangThai">Trạng thái</label>
+                        <select id="trangThai" name="trangThai" class="form-control">
+                            <option value="Đã thanh toán">Đã thanh toán</option>
+                            <option value="Chưa thanh toán">Chưa thanh toán</option>
                         </select>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tamTinh">Tạm tính <span style="color: red;">*</span></label>
-                            <input type="number" id="tamTinh" name="tamTinh" class="form-control" min="0" step="1000" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="giamGia">Giảm giá</label>
-                            <input type="number" id="giamGia" name="giamGia" class="form-control" min="0" step="1000" value="0">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="thue">Thuế (%)</label>
-                            <input type="number" id="thue" name="thue" class="form-control" min="0" max="100" step="1" value="10">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="trangThai">Trạng thái</label>
-                            <select id="trangThai" name="trangThai" class="form-control">
-                                <option value="Chưa thanh toán">Chưa thanh toán</option>
-                                <option value="Đã thanh toán">Đã thanh toán</option>
-                                <option value="Đã hủy">Đã hủy</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tổng tiền: <strong id="tongTien" style="color: var(--primary-color); font-size: 18px;">0đ</strong></label>
                     </div>
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('hoaDonModal')">Hủy</button>
                 <button class="btn btn-primary" onclick="saveHoaDon()">Lưu</button>
@@ -227,177 +134,105 @@
 
     <script src="js/app.js"></script>
     <script src="js/roles.js"></script>
+
     <script>
         let isEditMode = false;
 
-        // Tính tổng tiền
-        function calculateTotal() {
-            const tamTinh = parseFloat(document.getElementById('tamTinh').value) || 0;
-            const giamGia = parseFloat(document.getElementById('giamGia').value) || 0;
-            const thuePercent = parseFloat(document.getElementById('thue').value) || 0;
-            
-            const afterDiscount = tamTinh - giamGia;
-            const thue = afterDiscount * thuePercent / 100;
-            const total = afterDiscount + thue;
-            
-            document.getElementById('tongTien').textContent = formatCurrency(total);
-        }
-
-        // Load dropdown đơn hàng
-        async function loadDonHangDropdown() {
-            const sampleData = [
-                { maDH: 1, label: 'Đơn hàng #1 - Bàn 5' },
-                { maDH: 2, label: 'Đơn hàng #2 - Bàn 3' },
-                { maDH: 3, label: 'Đơn hàng #3 - Bàn 8' }
-            ];
-            
-            const select = document.getElementById('maDH');
-            sampleData.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.maDH;
-                option.textContent = item.label;
-                select.appendChild(option);
-            });
-        }
-
-        // Load danh sách hóa đơn
         async function loadHoaDon() {
+            showLoading('hoaDonTable');
             try {
-                // TODO: Gọi API thực tế
-                const sampleData = [
-                    { maHD: 1, maDH: 1, tamTinh: 250000, giamGia: 0, thue: 25000, trangThai: 'Đã thanh toán', taoLuc: new Date().toISOString() },
-                    { maHD: 2, maDH: 2, tamTinh: 180000, giamGia: 20000, thue: 16000, trangThai: 'Đã thanh toán', taoLuc: new Date(Date.now() - 3600000).toISOString() },
-                    { maHD: 3, maDH: 3, tamTinh: 320000, giamGia: 50000, thue: 27000, trangThai: 'Chưa thanh toán', taoLuc: new Date(Date.now() - 7200000).toISOString() },
-                    { maHD: 4, maDH: 4, tamTinh: 450000, giamGia: 0, thue: 45000, trangThai: 'Đã thanh toán', taoLuc: new Date(Date.now() - 10800000).toISOString() }
-                ];
-                
+                const result = await apiGet('/HoaDon/get-all');
+                hideLoading('hoaDonTable');
+
+                if (!result || !result.success || !result.data) {
+                    showAlert('Không có dữ liệu hóa đơn hoặc lỗi khi tải!', 'warning');
+                    return;
+                }
+
+                const data = result.data;
                 const columns = [
                     { field: 'maHD' },
-                    { field: 'maDH' },
-                    { field: 'tamTinh', render: (data) => formatCurrency(data.tamTinh) },
-                    { field: 'giamGia', render: (data) => formatCurrency(data.giamGia) },
-                    { field: 'thue', render: (data) => formatCurrency(data.thue) },
-                    { 
-                        field: 'total',
-                        render: (data) => {
-                            const total = data.tamTinh - data.giamGia + data.thue;
-                            return `<strong style="color: var(--primary-color);">${formatCurrency(total)}</strong>`;
-                        }
-                    },
-                    { 
-                        field: 'trangThai',
-                        render: (data) => {
-                            const badgeClass = data.trangThai === 'Đã thanh toán' ? 'badge-success' : 
-                                              data.trangThai === 'Chưa thanh toán' ? 'badge-warning' : 'badge-danger';
-                            return `<span class="badge ${badgeClass}">${data.trangThai}</span>`;
-                        }
-                    },
-                    { field: 'taoLuc', render: (data) => formatDateTime(data.taoLuc) }
+                    { field: 'maBan' },
+                    { field: 'tenNV' },
+                    { field: 'ngayLap', render: x => formatDate(x.ngayLap) },
+                    { field: 'tongTien', render: x => formatCurrency(x.tongTien) },
+                    { field: 'trangThai', render: x => `<span class="badge ${x.trangThai === 'Đã thanh toán' ? 'badge-success' : 'badge-warning'}">${x.trangThai}</span>` }
                 ];
-                
-                const actions = (data) => `
-                    <div style="text-align: center;">
-                        <button class="btn btn-sm btn-primary" onclick="printHoaDon(${data.maHD})">🖨️ In</button>
-                        <button class="btn btn-sm btn-warning" onclick="editHoaDon(${data.maHD})">✏️ Sửa</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteHoaDon(${data.maHD})">🗑️ Xóa</button>
+
+                const actions = (x) => `
+                    <div style="text-align:center;">
+                        <button class="btn btn-sm btn-warning" onclick="editHoaDon(${x.maHD})">✏️</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteHoaDon(${x.maHD})">🗑️</button>
                     </div>
                 `;
-                
-                renderTable('hoaDonTable', sampleData, columns, actions);
+
+                renderTable('hoaDonTable', data, columns, actions);
                 searchTable('searchInput', 'hoaDonTable');
-            } catch (error) {
-                console.error('Error loading hoa don:', error);
-                showAlert('Lỗi khi tải danh sách hóa đơn', 'danger');
+            } catch (err) {
+                hideLoading('hoaDonTable');
+                showAlert('Lỗi khi tải hóa đơn: ' + err.message, 'danger');
             }
         }
 
-        // In hóa đơn
-        function printHoaDon(id) {
-            showAlert('Chức năng in hóa đơn đang được phát triển', 'info');
-        }
-
-        // Mở modal thêm
         function openAddModal() {
             isEditMode = false;
-            document.getElementById('modalTitle').textContent = 'Tạo hóa đơn';
+            document.getElementById('modalTitle').textContent = 'Thêm hóa đơn';
             resetForm('hoaDonForm');
-            calculateTotal();
             openModal('hoaDonModal');
         }
 
-        // Sửa hóa đơn
         async function editHoaDon(id) {
             try {
-                const sampleData = {
-                    maHD: id,
-                    maDH: 1,
-                    tamTinh: 250000,
-                    giamGia: 0,
-                    thue: 10,
-                    trangThai: 'Chưa thanh toán'
-                };
-                
-                isEditMode = true;
-                document.getElementById('modalTitle').textContent = 'Sửa hóa đơn';
-                fillForm('hoaDonForm', sampleData);
-                calculateTotal();
-                openModal('hoaDonModal');
+                const result = await apiGet('/HoaDon/get-all');
+                if (!result || !result.data) return;
+
+                const hd = result.data.find(x => x.maHD === id);
+                if (hd) {
+                    isEditMode = true;
+                    document.getElementById('modalTitle').textContent = 'Sửa hóa đơn';
+                    fillForm('hoaDonForm', hd);
+                    openModal('hoaDonModal');
+                }
             } catch (error) {
-                console.error('Error loading hoa don:', error);
-                showAlert('Lỗi khi tải thông tin hóa đơn', 'danger');
+                showAlert('Lỗi khi tải dữ liệu hóa đơn!', 'danger');
             }
         }
 
-        // Lưu hóa đơn
         async function saveHoaDon() {
-            try {
-                const formData = getFormData('hoaDonForm');
-                
-                if (!formData.maDH || !formData.tamTinh) {
-                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
-                    return;
-                }
-                
-                if (isEditMode) {
-                    showAlert('Cập nhật hóa đơn thành công!', 'success');
-                } else {
-                    showAlert('Tạo hóa đơn thành công!', 'success');
-                }
-                
-                closeModal('hoaDonModal');
-                loadHoaDon();
-            } catch (error) {
-                console.error('Error saving hoa don:', error);
-                showAlert('Lỗi khi lưu hóa đơn', 'danger');
-            }
-        }
-
-        // Xóa hóa đơn
-        async function deleteHoaDon(id) {
-            if (!confirmDelete('Bạn có chắc chắn muốn xóa hóa đơn này?')) {
+            const formData = getFormData('hoaDonForm');
+            if (!formData.maBan || !formData.tenNV || !formData.ngayLap || !formData.tongTien) {
+                showAlert('Vui lòng nhập đầy đủ thông tin!', 'warning');
                 return;
             }
-            
+
             try {
-                showAlert('Xóa hóa đơn thành công!', 'success');
+                if (isEditMode) {
+                    await apiPut('/HoaDon/update', formData);
+                    showAlert('Cập nhật hóa đơn thành công!', 'success');
+                } else {
+                    await apiPost('/HoaDon/add', formData);
+                    showAlert('Thêm hóa đơn thành công!', 'success');
+                }
+                closeModal('hoaDonModal');
                 loadHoaDon();
-            } catch (error) {
-                console.error('Error deleting hoa don:', error);
-                showAlert('Lỗi khi xóa hóa đơn', 'danger');
+            } catch (err) {
+                showAlert('Lỗi khi lưu hóa đơn!', 'danger');
             }
         }
 
-        // Load data khi trang load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDonHangDropdown();
-            loadHoaDon();
-            
-            // Tính tổng tiền khi thay đổi giá trị
-            document.getElementById('tamTinh').addEventListener('input', calculateTotal);
-            document.getElementById('giamGia').addEventListener('input', calculateTotal);
-            document.getElementById('thue').addEventListener('input', calculateTotal);
-        });
+        async function deleteHoaDon(id) {
+            if (!confirmDelete('Bạn có chắc chắn muốn xóa hóa đơn này?')) return;
+
+            try {
+                await apiDelete(`/HoaDon/delete/${id}`);
+                showAlert('Xóa hóa đơn thành công!', 'success');
+                loadHoaDon();
+            } catch (err) {
+                showAlert('Lỗi khi xóa hóa đơn!', 'danger');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadHoaDon);
     </script>
 </body>
 </html>
-
