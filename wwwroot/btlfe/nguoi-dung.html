@@ -8,12 +8,14 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
+
+        <!-- Thanh điều hướng bên trái -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">☕</div>
                 <h2>CAFE MANAGER</h2>
             </div>
+
             <ul class="sidebar-menu">
                 <li class="menu-item">
                     <a href="index.html">
@@ -21,72 +23,84 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="khu-vuc.html">
                         <span class="icon">📍</span>
                         <span>Khu vực</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="ban.html">
                         <span class="icon">🪑</span>
                         <span>Bàn</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="mon.html">
                         <span class="icon">☕</span>
                         <span>Món</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="size.html">
                         <span class="icon">📏</span>
                         <span>Size món</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="topping.html">
                         <span class="icon">🧊</span>
                         <span>Topping</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="don-hang.html">
                         <span class="icon">📋</span>
                         <span>Đơn hàng</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="hoa-don.html">
                         <span class="icon">🧾</span>
                         <span>Hóa đơn</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="thanh-toan.html">
                         <span class="icon">💰</span>
                         <span>Thanh toán</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="nguoi-dung.html">
                         <span class="icon">👥</span>
                         <span>Nhân viên</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="ca-lam.html">
                         <span class="icon">🕐</span>
                         <span>Ca làm</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="vai-tro.html">
                         <span class="icon">🔑</span>
                         <span>Vai trò</span>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="#" onclick="logout(); return false;">
                         <span class="icon">🚪</span>
@@ -96,13 +110,15 @@
             </ul>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Nội dung chính -->
         <main class="main-content">
-            <!-- Header -->
+
+            <!-- Phần tiêu đề -->
             <header class="header">
                 <div class="header-left">
                     <h1>Quản lý Nhân viên</h1>
                 </div>
+
                 <div class="header-right">
                     <div class="user-info">
                         <div class="user-avatar" id="userAvatar">A</div>
@@ -114,7 +130,7 @@
                 </div>
             </header>
 
-            <!-- Content -->
+            <!-- Phần nội dung -->
             <div class="content">
                 <div id="alertContainer"></div>
 
@@ -122,13 +138,16 @@
                     <div class="card-header">
                         <h3>Danh sách Nhân viên</h3>
                     </div>
+
                     <div class="card-body">
-                        <!-- Action Bar -->
+
+                        <!-- Thanh tác vụ -->
                         <div class="action-bar">
                             <div class="search-box">
                                 <input type="text" id="searchInput" placeholder="Tìm kiếm nhân viên...">
                                 <span class="search-icon">🔍</span>
                             </div>
+
                             <div class="action-buttons">
                                 <button class="btn btn-primary" onclick="openAddModal()">
                                     ➕ Thêm nhân viên
@@ -136,7 +155,7 @@
                             </div>
                         </div>
 
-                        <!-- Table -->
+                        <!-- Bảng dữ liệu -->
                         <div class="table-container">
                             <table class="table">
                                 <thead>
@@ -150,6 +169,7 @@
                                         <th style="text-align: center;">Thao tác</th>
                                     </tr>
                                 </thead>
+
                                 <tbody id="nguoiDungTable">
                                     <tr>
                                         <td colspan="7" style="text-align: center; padding: 40px;">
@@ -159,41 +179,49 @@
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal Thêm/Sửa -->
+    <!-- Cửa sổ Thêm/Sửa nhân viên -->
     <div id="nguoiDungModal" class="modal">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h3 id="modalTitle">Thêm nhân viên</h3>
-                <button class="modal-close" onclick="closeModal('nguoiDungModal')">&times;</button>
+                <button class="modal-close" onclick="closeModal('nguoiDungModal')">×</button>
             </div>
+
             <div class="modal-body">
+
                 <form id="nguoiDungForm">
                     <input type="hidden" id="maND" name="maND">
-                    
+
                     <div class="form-group">
                         <label for="hoTen">Họ tên <span style="color: red;">*</span></label>
                         <input type="text" id="hoTen" name="hoTen" class="form-control" required>
                     </div>
 
                     <div class="form-row">
+
                         <div class="form-group">
                             <label for="taiKhoan">Tài khoản <span style="color: red;">*</span></label>
                             <input type="text" id="taiKhoan" name="taiKhoan" class="form-control" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="matKhau">Mật khẩu <span style="color: red;" id="matKhauRequired">*</span></label>
+                            <label for="matKhau">
+                                Mật khẩu <span style="color: red;" id="matKhauRequired">*</span>
+                            </label>
                             <input type="password" id="matKhau" name="matKhau" class="form-control">
                         </div>
                     </div>
 
                     <div class="form-row">
+
                         <div class="form-group">
                             <label for="maVT">Vai trò <span style="color: red;">*</span></label>
                             <select id="maVT" name="maVT" class="form-control" required>
@@ -208,190 +236,197 @@
                                 <option value="false">Ngừng hoạt động</option>
                             </select>
                         </div>
+
                     </div>
                 </form>
+
             </div>
+
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('nguoiDungModal')">Hủy</button>
                 <button class="btn btn-primary" onclick="saveNguoiDung()">Lưu</button>
             </div>
+
         </div>
     </div>
 
+    <!-- Import JS -->
     <script src="js/app.js"></script>
     <script src="js/roles.js"></script>
+
     <script>
+
         let isEditMode = false;
 
-        // Load vai trò
+        // Tải danh sách vai trò cho dropdown
         async function loadVaiTroDropdown() {
             try {
                 const response = await apiGet('/VaiTro/get-all');
-                if (response && response.success && response.data) {
-                    const select = document.getElementById('maVT');
-                    select.innerHTML = '<option value="">-- Chọn vai trò --</option>';
-                    response.data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.maVT;
-                        option.textContent = item.tenVT;
-                        select.appendChild(option);
-                    });
-                } else {
-                    showAlert('Không thể tải danh sách vai trò', 'warning');
-                }
-            } catch (error) {
-                console.error('Error loading vai tro:', error);
-                showAlert('Lỗi khi tải danh sách vai trò', 'danger');
+                const data = response.data || (Array.isArray(response) ? response : []);
+
+                const select = document.getElementById('maVT');
+                data.forEach(item => {
+                    const op = document.createElement('option');
+                    op.value = item.maVT;
+                    op.textContent = item.tenVT;
+                    select.appendChild(op);
+                });
+
+            } catch (err) {
+                console.error('Lỗi khi tải vai trò:', err);
             }
         }
 
-        // Load danh sách nhân viên
+        // Tải danh sách nhân viên
         async function loadNguoiDung() {
             try {
-                showLoading('nguoiDungTable');
                 const response = await apiGet('/NguoiDung/get-all');
-                hideLoading('nguoiDungTable');
+                const data = response.data || (Array.isArray(response) ? response : []);
 
-                if (response && response.success && response.data) {
-                    const columns = [
-                        { field: 'maND' },
-                        { field: 'hoTen' },
-                        { field: 'taiKhoan' },
-                        { field: 'tenVT' },
-                        {
-                            field: 'hoatDong',
-                            render: (data) => {
-                                const badgeClass = data.hoatDong ? 'badge-success' : 'badge-danger';
-                                const text = data.hoatDong ? 'Hoạt động' : 'Ngừng hoạt động';
-                                return `<span class="badge ${badgeClass}">${text}</span>`;
-                            }
-                        },
-                        { field: 'taoLuc', render: (data) => formatDateTime(data.taoLuc) }
-                    ];
+                const columns = [
+                    { field: 'maND' },
+                    { field: 'hoTen' },
+                    { field: 'taiKhoan' },
+                    { field: 'tenVT' },
 
-                    const actions = (data) => `
+                    {
+                        field: 'hoatDong',
+                        render: (r) => {
+                            const cls = r.hoatDong ? 'badge-success' : 'badge-danger';
+                            const text = r.hoatDong ? 'Hoạt động' : 'Ngừng hoạt động';
+                            return `<span class="badge ${cls}">${text}</span>`;
+                        }
+                    },
+
+                    { field: 'taoLuc', render: (r) => formatDateTime(r.taoLuc) }
+                ];
+
+                const actions = (r) => `
                         <div style="text-align: center;">
-                            <button class="btn btn-sm btn-warning" onclick="editNguoiDung(${data.maND})">✏️ Sửa</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteNguoiDung(${data.maND})">🗑️ Xóa</button>
+                            <button class="btn btn-sm btn-warning" onclick="editNguoiDung(${r.maND})">✏️ Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteNguoiDung(${r.maND})">🗑️ Xóa</button>
                         </div>
                     `;
 
-                    renderTable('nguoiDungTable', response.data, columns, actions);
-                    searchTable('searchInput', 'nguoiDungTable');
-                } else {
-                    showAlert('Không thể tải danh sách nhân viên', 'warning');
-                }
-            } catch (error) {
-                console.error('Error loading nguoi dung:', error);
-                hideLoading('nguoiDungTable');
-                showAlert('Lỗi khi tải danh sách nhân viên', 'danger');
+                renderTable('nguoiDungTable', data, columns, actions);
+                searchTable('searchInput', 'nguoiDungTable');
+
+            } catch (err) {
+                showAlert('Lỗi khi tải danh sách nhân viên: ' + err.message, 'danger');
             }
         }
 
-        // Mở modal thêm
+        // Mở modal thêm nhân viên
         function openAddModal() {
             isEditMode = false;
             document.getElementById('modalTitle').textContent = 'Thêm nhân viên';
+
             document.getElementById('matKhau').required = true;
             document.getElementById('matKhauRequired').style.display = 'inline';
+
             resetForm('nguoiDungForm');
             openModal('nguoiDungModal');
         }
 
-        // Sửa nhân viên
+        // Mở modal sửa nhân viên
         async function editNguoiDung(id) {
             try {
-                // Tìm nhân viên trong danh sách đã load (hoặc gọi API get by id nếu có)
-                const response = await apiGet('/NguoiDung/get-all');
-                if (response && response.success && response.data) {
-                    const nguoiDung = response.data.find(nd => nd.maND === id);
-                    if (nguoiDung) {
-                        isEditMode = true;
-                        document.getElementById('modalTitle').textContent = 'Sửa nhân viên';
-                        document.getElementById('matKhau').required = false;
-                        document.getElementById('matKhauRequired').style.display = 'none';
-                        fillForm('nguoiDungForm', nguoiDung);
-                        openModal('nguoiDungModal');
-                    } else {
-                        showAlert('Không tìm thấy nhân viên', 'warning');
-                    }
-                } else {
-                    showAlert('Không thể tải thông tin nhân viên', 'warning');
-                }
-            } catch (error) {
-                console.error('Error loading nguoi dung:', error);
-                showAlert('Lỗi khi tải thông tin nhân viên', 'danger');
+                const res = await apiGet('/NguoiDung/get-all');
+                const all = res.data || res;
+                const nd = all.find(x => x.maND === id);
+
+                if (!nd) return;
+
+                isEditMode = true;
+                document.getElementById('modalTitle').textContent = 'Sửa nhân viên';
+
+                document.getElementById('matKhau').required = false;
+                document.getElementById('matKhauRequired').style.display = 'none';
+
+                fillForm('nguoiDungForm', nd);
+                openModal('nguoiDungModal');
+
+            } catch (err) {
+                showAlert('Lỗi khi tải nhân viên', 'danger');
             }
         }
 
-        // Lưu nhân viên
+        // Lưu nhân viên (thêm/sửa)
         async function saveNguoiDung() {
             try {
-                const formData = getFormData('nguoiDungForm');
+                const f = getFormData('nguoiDungForm');
 
-                if (!formData.hoTen || !formData.taiKhoan || !formData.maVT) {
-                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
-                    return;
-                }
+                if (!f.hoTen || !f.taiKhoan || !f.maVT)
+                    return showAlert('Vui lòng nhập đầy đủ thông tin!', 'warning');
 
-                if (!isEditMode && !formData.matKhau) {
-                    showAlert('Vui lòng nhập mật khẩu', 'warning');
-                    return;
-                }
+                if (!isEditMode && !f.matKhau)
+                    return showAlert('Vui lòng nhập mật khẩu!', 'warning');
 
-                let response;
+                const data = {
+                    HoTen: f.hoTen,
+                    TaiKhoan: f.taiKhoan,
+                    MaVT: Number(f.maVT),
+                    HoatDong: f.hoatDong === 'true' || f.hoatDong === true
+                };
+
+                if (f.matKhau && f.matKhau.trim() !== '')
+                    data.MatKhauStr = f.matKhau;
+
+                if (isEditMode)
+                    data.MaND = Number(f.maND);
+
+                let res;
+
                 if (isEditMode) {
-                    response = await apiPut('/NguoiDung/update', formData);
-                    if (response && response.success) {
-                        showAlert('Cập nhật nhân viên thành công!', 'success');
-                    } else {
-                        showAlert('Cập nhật nhân viên thất bại', 'danger');
-                        return;
-                    }
+                    res = await apiPut('/NguoiDung/update', data);
+
+                    if (res?.error)
+                        return showAlert(res.message, 'danger');
+
+                    showAlert('Cập nhật nhân viên thành công!', 'success');
+
                 } else {
-                    response = await apiPost('/NguoiDung/add', formData);
-                    if (response && response.success) {
-                        showAlert('Thêm nhân viên thành công!', 'success');
-                    } else {
-                        showAlert('Thêm nhân viên thất bại', 'danger');
-                        return;
-                    }
+                    res = await apiPost('/NguoiDung/add', data);
+
+                    if (res?.error)
+                        return showAlert(res.message, 'danger');
+
+                    showAlert('Thêm nhân viên thành công!', 'success');
                 }
 
                 closeModal('nguoiDungModal');
-                loadNguoiDung();
-            } catch (error) {
-                console.error('Error saving nguoi dung:', error);
-                showAlert('Lỗi khi lưu nhân viên', 'danger');
+                setTimeout(loadNguoiDung, 300);
+
+            } catch (err) {
+                showAlert('Lỗi khi lưu nhân viên!', 'danger');
             }
         }
 
         // Xóa nhân viên
         async function deleteNguoiDung(id) {
-            if (!confirmDelete('Bạn có chắc chắn muốn xóa nhân viên này?')) {
-                return;
-            }
+            if (!confirmDelete('Bạn có chắc chắn muốn xóa nhân viên này?')) return;
 
             try {
-                const response = await apiDelete(`/NguoiDung/delete/${id}`);
-                if (response) {
-                    showAlert('Xóa nhân viên thành công!', 'success');
-                    loadNguoiDung();
-                } else {
-                    showAlert('Xóa nhân viên thất bại', 'danger');
-                }
-            } catch (error) {
-                console.error('Error deleting nguoi dung:', error);
-                showAlert('Lỗi khi xóa nhân viên', 'danger');
+                const res = await apiDelete(`/NguoiDung/delete/${id}`);
+
+                if (res?.error)
+                    return showAlert(res.message, 'danger');
+
+                showAlert('Xóa nhân viên thành công!', 'success');
+                loadNguoiDung();
+
+            } catch (err) {
+                showAlert('Lỗi khi xóa nhân viên!', 'danger');
             }
         }
 
-        // Load data khi trang load
-        document.addEventListener('DOMContentLoaded', function() {
+        // Tải dữ liệu khi trang load
+        document.addEventListener('DOMContentLoaded', () => {
             loadVaiTroDropdown();
             loadNguoiDung();
         });
+
     </script>
+
 </body>
 </html>
-

@@ -22,7 +22,7 @@ namespace QLCF.Controllers
             if (!result.IsSuccess)
                 return BadRequest(result.Message);
 
-            
+
             return Ok(new
             {
                 success = result.IsSuccess,
@@ -42,6 +42,13 @@ namespace QLCF.Controllers
         public IActionResult Update([FromBody] Mon mon)
         {
             var msg = _monBUS.Update(mon);
+
+            // Kiểm tra nếu có lỗi validation (món đã bán ra)
+            if (msg.Contains("đã được bán ra") || msg.Contains("Lỗi") || msg.Contains("Không thể"))
+            {
+                return BadRequest(new { message = msg });
+            }
+
             return Ok(new { message = msg });
         }
 
@@ -51,6 +58,7 @@ namespace QLCF.Controllers
             var msg = _monBUS.Delete(id);
             return Ok(new { message = msg });
         }
+
         [HttpGet("check-sold/{id}")]
         public IActionResult CheckSold(int id)
         {

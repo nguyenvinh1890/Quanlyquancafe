@@ -57,9 +57,11 @@ namespace QLCF.BUS
         {
             try
             {
+                // Insert vào chi_tiet_don và lấy ma_ct vừa insert
                 string sql = @"
             INSERT INTO chi_tiet_don(ma_dh, ma_mon, ma_size, so_luong, don_gia)
-            VALUES (@ma_dh, @ma_mon, @ma_size, @so_luong, @don_gia)";
+            VALUES (@ma_dh, @ma_mon, @ma_size, @so_luong, @don_gia);
+            SELECT SCOPE_IDENTITY();";
                 var param = new Dictionary<string, object>
         {
             {"@ma_dh", ctdh.MaDH},
@@ -68,8 +70,43 @@ namespace QLCF.BUS
             {"@so_luong", ctdh.SoLuong},
             {"@don_gia", ctdh.DonGia}
         };
-                int rows = _db.ExecuteNonQuery(sql, param);
-                return rows > 0 ? "Thêm chi tiết đơn hàng thành công" : "Không thể thêm chi tiết đơn hàng";
+
+                // Execute và lấy ma_ct
+                DataTable dt = _db.ExecuteQuery(sql, param);
+                if (dt.Rows.Count == 0)
+                {
+                    return "Không thể thêm chi tiết đơn hàng";
+                }
+
+                int maCT = Convert.ToInt32(dt.Rows[0][0]);
+
+                // Nếu có topping, lưu vào bảng don_topping
+                if (ctdh.Toppings != null && ctdh.Toppings.Count > 0)
+                {
+                    foreach (var topping in ctdh.Toppings)
+                    {
+                        try
+                        {
+                            string sqlTopping = @"
+                        INSERT INTO don_topping(ma_ct, ma_lua_chon, gia_them)
+                        VALUES (@ma_ct, @ma_lua_chon, @gia_them)";
+                            var paramTopping = new Dictionary<string, object>
+                    {
+                        {"@ma_ct", maCT},
+                        {"@ma_lua_chon", topping.MaLuaChon},
+                        {"@gia_them", topping.GiaThem}
+                    };
+                            _db.ExecuteNonQuery(sqlTopping, paramTopping);
+                        }
+                        catch (Exception exTopping)
+                        {
+                            // Log lỗi nhưng không dừng quá trình
+                            Console.WriteLine($"Lỗi khi thêm topping {topping.MaLuaChon}: {exTopping.Message}");
+                        }
+                    }
+                }
+
+                return "Thêm chi tiết đơn hàng thành công";
             }
             catch (Exception ex)
             {
@@ -82,17 +119,41 @@ namespace QLCF.BUS
         {
             try
             {
-                string sql = @"
-            UPDATE chi_tiet_don
-            SET so_luong=@so_luong, don_gia=@don_gia
-            WHERE ma_dh=@ma_dh AND ma_mon=@ma_mon";
-                var param = new Dictionary<string, object>
-        {
-            {"@ma_dh", ctdh.MaDH},
-            {"@ma_mon", ctdh.MaMon},
-            {"@so_luong", ctdh.SoLuong},
-            {"@don_gia", ctdh.DonGia}
-        };
+                // Nếu có ma_ct, dùng ma_ct để update (chính xác hơn)
+                // Nếu không, dùng ma_dh + ma_mon + ma_size
+                string sql;
+                Dictionary<string, object> param;
+
+                if (ctdh.MaCT > 0)
+                {
+                    sql = @"
+                        UPDATE chi_tiet_don
+                        SET so_luong=@so_luong, don_gia=@don_gia
+                        WHERE ma_ct=@ma_ct";
+                    param = new Dictionary<string, object>
+                    {
+                        {"@ma_ct", ctdh.MaCT},
+                        {"@so_luong", ctdh.SoLuong},
+                        {"@don_gia", ctdh.DonGia}
+                    };
+                }
+                else
+                {
+                    sql = @"
+                        UPDATE chi_tiet_don
+                        SET so_luong=@so_luong, don_gia=@don_gia
+                        WHERE ma_dh=@ma_dh AND ma_mon=@ma_mon 
+                        AND (ma_size=@ma_size OR (ma_size IS NULL AND @ma_size IS NULL))";
+                    param = new Dictionary<string, object>
+                    {
+                        {"@ma_dh", ctdh.MaDH},
+                        {"@ma_mon", ctdh.MaMon},
+                        {"@ma_size", ctdh.MaSize ?? (object)DBNull.Value},
+                        {"@so_luong", ctdh.SoLuong},
+                        {"@don_gia", ctdh.DonGia}
+                    };
+                }
+
                 int rows = _db.ExecuteNonQuery(sql, param);
                 return rows > 0 ? "Cập nhật chi tiết đơn hàng thành công" : "Không tìm thấy chi tiết cần cập nhật";
             }
@@ -127,7 +188,7 @@ namespace QLCF.BUS
             try
             {
                 string sql = @"
-                    SELECT c.ma_dh, c.ma_mon, c.ma_size, c.so_luong, c.don_gia, 
+                    SELECT c.ma_ct, c.ma_dh, c.ma_mon, c.ma_size, c.so_luong, c.don_gia, 
                            (c.so_luong * c.don_gia) AS thanh_tien,
                            m.ten_mon, s.ten_size
                     FROM chi_tiet_don c
@@ -147,6 +208,7 @@ namespace QLCF.BUS
                 {
                     list.Add(new ChiTietDonHang
                     {
+                        MaCT = (int)r["ma_ct"],
                         MaDH = (int)r["ma_dh"],
                         MaMon = (int)r["ma_mon"],
                         MaSize = r["ma_size"] == DBNull.Value ? null : (int?)r["ma_size"],

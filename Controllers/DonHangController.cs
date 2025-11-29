@@ -43,5 +43,13 @@ namespace QLCF.Controllers
             var message = _bus.Delete(id);
             return Ok(message);
         }
+
+        [HttpGet("get-tong-tien/{maDH}")]
+        public IActionResult GetTongTien(int maDH)
+        {
+            var result = _bus.GetTongTien(maDH);
+            if (!result.Item1) return BadRequest(result.Item2);
+            return Ok(new { tongTien = result.Item3 });
+        }
     }
 }

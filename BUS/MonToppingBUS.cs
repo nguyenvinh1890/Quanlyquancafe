@@ -19,11 +19,14 @@ namespace QLCF.BUS
         {
             try
             {
+                // Join với lua_chon_topping để lấy tên lựa chọn topping
                 string sql = @"
-                    SELECT mt.ma_mon, mt.ma_topping, m.ten_mon, t.ten_topping
+                    SELECT mt.ma_mon, mt.ma_topping, m.ten_mon, 
+                           ISNULL(lct.ten_lua_chon, t.ten_topping) AS ten_topping
                     FROM mon_topping mt
                     JOIN mon m ON mt.ma_mon = m.ma_mon
-                    JOIN topping t ON mt.ma_topping = t.ma_topping";
+                    JOIN topping t ON mt.ma_topping = t.ma_topping
+                    LEFT JOIN lua_chon_topping lct ON mt.ma_topping = lct.ma_topping";
 
                 DataTable dt = _db.ExecuteQuery(sql);
                 var list = new List<MonTopping>();

@@ -52,14 +52,24 @@ namespace QLCF.BUS
         {
             try
             {
+                // Nếu không có mo_luc, tự động set là thời gian hiện tại
+                if (dh.MoLuc == default(DateTime))
+                {
+                    dh.MoLuc = DateTime.Now;
+                }
+
+                // Xử lý NULL cho ma_ban và mo_boi
+                object maBanValue = dh.MaBan.HasValue && dh.MaBan.Value > 0 ? (object)dh.MaBan.Value : DBNull.Value;
+                object moBoiValue = dh.MoBoi.HasValue && dh.MoBoi.Value > 0 ? (object)dh.MoBoi.Value : DBNull.Value;
+
                 string sql = @"INSERT INTO don_hang (ma_ban, loai_dh, trang_thai, mo_boi, mo_luc)
                                VALUES (@ma_ban, @loai_dh, @trang_thai, @mo_boi, @mo_luc)";
                 var param = new Dictionary<string, object>
                 {
-                    {"@ma_ban", dh.MaBan},
-                    {"@loai_dh", dh.LoaiDH},
-                    {"@trang_thai", dh.TrangThai},
-                    {"@mo_boi", dh.MoBoi},
+                    {"@ma_ban", maBanValue},
+                    {"@loai_dh", dh.LoaiDH ?? ""},
+                    {"@trang_thai", dh.TrangThai ?? "Mới"},
+                    {"@mo_boi", moBoiValue},
                     {"@mo_luc", dh.MoLuc}
                 };
                 int rows = _db.ExecuteNonQuery(sql, param);
@@ -106,6 +116,33 @@ namespace QLCF.BUS
             catch (Exception ex)
             {
                 return "Lỗi khi xóa đơn hàng: " + ex.Message;
+            }
+        }
+
+        // Lấy tổng tiền của đơn hàng (từ chi_tiet_don)
+        public (bool, string, decimal) GetTongTien(int maDH)
+        {
+            try
+            {
+                string sql = @"
+                    SELECT ISNULL(SUM(so_luong * don_gia), 0) AS tong_tien
+                    FROM chi_tiet_don
+                    WHERE ma_dh = @ma_dh";
+
+                var param = new Dictionary<string, object> { { "@ma_dh", maDH } };
+                DataTable dt = _db.ExecuteQuery(sql, param);
+
+                if (dt.Rows.Count > 0)
+                {
+                    decimal tongTien = Convert.ToDecimal(dt.Rows[0]["tong_tien"]);
+                    return (true, "Lấy tổng tiền thành công", tongTien);
+                }
+
+                return (true, "Đơn hàng chưa có chi tiết", 0);
+            }
+            catch (Exception ex)
+            {
+                return (false, "Lỗi khi lấy tổng tiền: " + ex.Message, 0);
             }
         }
     }

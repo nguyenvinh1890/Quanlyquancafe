@@ -8,11 +8,8 @@
 </head>
 <body>
     <div class="app-container">
-<<<<<<< HEAD
-        <!-- Sidebar -->
-=======
-        <!-- Thanh bên -->
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
+
+        <!-- Thanh điều hướng bên trái -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">☕</div>
@@ -22,11 +19,7 @@
                 <li class="menu-item">
                     <a href="index.html">
                         <span class="icon">🏠</span>
-<<<<<<< HEAD
                         <span>Dashboard</span>
-=======
-                        <span>Bảng điều khiển</span>
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
                     </a>
                 </li>
                 <li class="menu-item">
@@ -104,15 +97,10 @@
             </ul>
         </aside>
 
-<<<<<<< HEAD
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-=======
         <!-- Nội dung chính -->
         <main class="main-content">
-            <!-- Phần đầu trang -->
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
+
+            <!-- Phần tiêu đề -->
             <header class="header">
                 <div class="header-left">
                     <h1>Quản lý Món</h1>
@@ -128,11 +116,7 @@
                 </div>
             </header>
 
-<<<<<<< HEAD
-            <!-- Content -->
-=======
-            <!-- Nội dung -->
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
+            <!-- Phần nội dung -->
             <div class="content">
                 <div id="alertContainer"></div>
 
@@ -141,11 +125,8 @@
                         <h3>Danh sách Món</h3>
                     </div>
                     <div class="card-body">
-<<<<<<< HEAD
-                        <!-- Action Bar -->
-=======
-                        <!-- Thanh công cụ -->
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
+
+                        <!-- Thanh tác vụ -->
                         <div class="action-bar">
                             <div class="search-box">
                                 <input type="text" id="searchInput" placeholder="Tìm kiếm món...">
@@ -158,11 +139,7 @@
                             </div>
                         </div>
 
-<<<<<<< HEAD
-                        <!-- Table -->
-=======
                         <!-- Bảng dữ liệu -->
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
                         <div class="table-container">
                             <table class="table">
                                 <thead>
@@ -182,53 +159,24 @@
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-<<<<<<< HEAD
-    <!-- Modal Thêm/Sửa -->
-=======
-    <!-- Hộp thoại Thêm/Sửa -->
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
+    <!-- Cửa sổ Thêm/Sửa món -->
     <div id="monModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">Thêm món</h3>
                 <button class="modal-close" onclick="closeModal('monModal')">×</button>
             </div>
+
             <div class="modal-body">
                 <form id="monForm">
                     <input type="hidden" id="maMon" name="maMon">
-<<<<<<< HEAD
-                    
-                    <div class="form-group">
-                        <label for="tenMon">Tên món <span style="color: red;">*</span></label>
-                        <input type="text" id="tenMon" name="tenMon" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="gia">Giá <span style="color: red;">*</span></label>
-                        <input type="number" id="gia" name="gia" class="form-control" min="0" step="1000" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('monModal')">Hủy</button>
-                <button class="btn btn-primary" onclick="saveMon()">Lưu</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/app.js"></script>
-    <script src="js/roles.js"></script>
-    <script>
-        let isEditMode = false;
-
-        // Load danh sách món
-=======
 
                     <div class="form-group">
                         <label for="tenMon">Tên món <span style="color: red;">*</span></label>
@@ -239,8 +187,18 @@
                         <label for="gia">Giá <span style="color: red;">*</span></label>
                         <input type="number" id="gia" name="gia" class="form-control" min="0" step="1000" required>
                     </div>
+
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="laToppingDiKem" name="laToppingDiKem" style="margin-right: 8px; width: auto;">
+                            <span>Món topping đi kèm (ví dụ: Bột MILO, Siro...)</span>
+                        </label>
+                        <small style="color: #999; font-size: 12px;">Món này sẽ hiển thị ở phần topping khi thêm món vào đơn hàng</small>
+                    </div>
+
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('monModal')">Hủy</button>
                 <button class="btn btn-primary" onclick="saveMon()">Lưu</button>
@@ -248,312 +206,180 @@
         </div>
     </div>
 
+    <!-- Import JS -->
     <script src="js/app.js"></script>
     <script src="js/roles.js"></script>
+
     <script>
+
         let isEditMode = false;
 
-        // Tải danh sách món
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
+        // Tải danh sách món từ API
         async function loadMon() {
             try {
-                // Gọi API thực tế
                 const response = await apiGet('/Mon/get-all');
                 const data = response.data || (Array.isArray(response) ? response : []);
-<<<<<<< HEAD
-                
-=======
 
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
                 const columns = [
                     { field: 'maMon' },
                     { field: 'tenMon' },
-                    { field: 'gia', render: (data) => formatCurrency(data.gia) }
+                    { field: 'gia', render: (d) => formatCurrency(d.gia) }
                 ];
-<<<<<<< HEAD
-                
-                const actions = (data) => `
-                    <div style="text-align: center;">
-                        <button class="btn btn-sm btn-warning" onclick="editMon(${data.maMon})">✏️ Sửa</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteMon(${data.maMon})">🗑️ Xóa</button>
-                    </div>
-                `;
-                
+
+                const actions = (d) => `
+                        <div style="text-align: center;">
+                            <button class="btn btn-sm btn-warning" onclick="editMon(${d.maMon})">✏️ Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteMon(${d.maMon})">🗑️ Xóa</button>
+                        </div>
+                    `;
+
                 renderTable('monTable', data, columns, actions);
+
                 searchTable('searchInput', 'monTable');
-                
-            } catch (error) {
-                console.error('Error loading mon:', error);
-                showAlert('Lỗi khi tải danh sách món: ' + error.message, 'danger');
+
+            } catch (err) {
+                showAlert('Lỗi khi tải danh sách món: ' + err.message, 'danger');
             }
         }
 
-        // Mở modal thêm
+        // Mở modal thêm món
         function openAddModal() {
             isEditMode = false;
             document.getElementById('modalTitle').textContent = 'Thêm món';
             resetForm('monForm');
-            openModal('monModal');
-=======
 
-                const actions = (data) => `
-                            <div style="text-align: center;">
-                                <button class="btn btn-sm btn-warning" onclick="editMon(${data.maMon})">✏️ Sửa</button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteMon(${data.maMon})">🗑️ Xóa</button>
-                            </div>
-                        `;
-
-                renderTable('monTable', data, columns, actions);
-
-                // Khởi tạo tìm kiếm sau khi hiển thị xong
-                setTimeout(() => {
-                    initSearch();
-                }, 100);
-
-            } catch (error) {
-                console.error('Lỗi khi tải món:', error);
-                showAlert('Lỗi khi tải danh sách món: ' + error.message, 'danger');
-            }
-        }
-
-        // Biến lưu trữ sự kiện tìm kiếm để có thể gỡ bỏ
-        let searchHandler = null;
-
-        // Hàm khởi tạo tìm kiếm
-        function initSearch() {
-            const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('monTable');
-
-            if (!searchInput) return;
-
-            // Xóa sự kiện cũ nếu có
-            if (searchHandler) {
-                searchInput.removeEventListener('keyup', searchHandler);
-            }
-
-            // Tạo sự kiện mới
-            searchHandler = function () {
-                const filter = this.value.toLowerCase().trim();
-                const tableBody = document.getElementById('monTable');
-
-                if (!tableBody) return;
-
-                const rows = tableBody.getElementsByTagName('tr');
-
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i];
-                    const text = row.textContent.toLowerCase();
-
-                    if (text.indexOf(filter) > -1) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
-            };
-
-            // Thêm sự kiện mới
-            searchInput.addEventListener('keyup', searchHandler);
-
-            // Thêm sự kiện cho biểu tượng tìm kiếm (khi nhấn vào)
-            const searchIcon = document.querySelector('.search-icon');
-            if (searchIcon) {
-                searchIcon.style.cursor = 'pointer';
-                searchIcon.addEventListener('click', () => {
-                    searchInput.focus();
-                });
-            }
-        }
-
-        // Mở hộp thoại thêm
-        function openAddModal() {
-            isEditMode = false;
-            document.getElementById('modalTitle').textContent = 'Thêm món';
-            resetForm('monForm');
-            // Enable field tên món khi thêm mới
             const tenMonInput = document.getElementById('tenMon');
-            if (tenMonInput) {
-                tenMonInput.disabled = false;
-                tenMonInput.title = '';
-                tenMonInput.style.backgroundColor = '';
-                tenMonInput.style.cursor = '';
-            }
+            const giaInput = document.getElementById('gia');
+
+            tenMonInput.disabled = false;
+            giaInput.disabled = false;
 
             openModal('monModal');
-
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
         }
 
         // Sửa món
         async function editMon(id) {
             try {
-                // Lấy dữ liệu từ API
                 const response = await apiGet('/Mon/get-all');
                 const allData = response.data || (Array.isArray(response) ? response : []);
-                const mon = allData.find(item => item.maMon === id);
-<<<<<<< HEAD
-                
-=======
+                const mon = allData.find(x => x.maMon === id);
 
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
-                if (mon) {
-                    isEditMode = true;
-                    document.getElementById('modalTitle').textContent = 'Sửa món';
-                    fillForm('monForm', mon);
-<<<<<<< HEAD
-                    openModal('monModal');
-                }
-                
-            } catch (error) {
-                console.error('Error loading mon:', error);
-=======
-                    // Kiểm tra xem món đã được bán ra chưa
-                    try {
-                        const checkResponse = await apiGet(`/Mon/check-sold/${id}`);
-                        const hasSold = checkResponse && checkResponse.hasSold === true;
+                if (!mon) return;
 
-                        // Nếu món đã được bán ra, disable field tên món
-                        const tenMonInput = document.getElementById('tenMon');
-                        if (tenMonInput) {
-                            if (hasSold) {
-                                tenMonInput.disabled = true;
-                                tenMonInput.title = 'Không thể sửa tên món đã được bán ra';
-                                tenMonInput.style.backgroundColor = '#f0f0f0';
-                                tenMonInput.style.cursor = 'not-allowed';
-                            } else {
-                                tenMonInput.disabled = false;
-                                tenMonInput.title = '';
-                                tenMonInput.style.backgroundColor = '';
-                                tenMonInput.style.cursor = '';
-                            }
-                        }
-                    } catch (checkError) {
-                        console.error('Error checking sold status:', checkError);
-                        // Nếu lỗi kiểm tra, vẫn cho phép sửa (backend sẽ validate)
-                    }
-                    openModal('monModal');
+                isEditMode = true;
+                document.getElementById('modalTitle').textContent = 'Sửa món';
+
+                fillForm('monForm', mon);
+
+                // Xử lý checkbox topping
+                document.getElementById('laToppingDiKem').checked =
+                    mon.laToppingDiKem === true || mon.laToppingDiKem === 1;
+
+                // Kiểm tra món đã bán chưa
+                const check = await apiGet(`/Mon/check-sold/${id}`);
+
+                let hasSold = false;
+                if (typeof check === 'object') hasSold = check.hasSold;
+                else if (typeof check === 'boolean') hasSold = check;
+
+                const tenMonInput = document.getElementById('tenMon');
+                const giaInput = document.getElementById('gia');
+
+                if (hasSold) {
+                    tenMonInput.disabled = true;
+                    tenMonInput.style.background = '#f0f0f0';
+                    tenMonInput.title = 'Món đã bán — không được sửa';
+
+                    giaInput.disabled = true;
+                    giaInput.style.background = '#f0f0f0';
+                    giaInput.title = 'Món đã bán — không được sửa';
+
+                    showAlert('Món đã được bán ra, không thể sửa tên hoặc giá!', 'warning');
                 }
 
-            } catch (error) {
-                console.error('Lỗi khi tải món:', error);
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
-                showAlert('Lỗi khi tải thông tin món: ' + error.message, 'danger');
+                openModal('monModal');
+
+            } catch (err) {
+                showAlert('Lỗi khi tải thông tin món', 'danger');
             }
         }
 
-        // Lưu món
+        // Lưu món (thêm hoặc sửa)
         async function saveMon() {
             try {
-                const formData = getFormData('monForm');
-<<<<<<< HEAD
-                
-                if (!formData.tenMon || !formData.gia) {
-                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
-                    return;
-                }
-                
-                let result;
-                if (isEditMode) {
-                    // Gọi API PUT
-                    result = await apiPut('/Mon/update', formData);
-                    showAlert(result.message || 'Cập nhật món thành công!', 'success');
-                } else {
-                    // Gọi API POST
-                    result = await apiPost('/Mon/add', formData);
-                    showAlert(result.message || 'Thêm món thành công!', 'success');
-                }
-                
-                closeModal('monModal');
-                loadMon();
-                
-=======
+                const f = getFormData('monForm');
 
-                // Nếu field tên món bị disabled, lấy giá trị từ input trực tiếp
                 const tenMonInput = document.getElementById('tenMon');
-                let tenMon = formData.tenMon;
-                if (tenMonInput && tenMonInput.disabled) {
-                    tenMon = tenMonInput.value || formData.tenMon;
-                }
+                const giaInput = document.getElementById('gia');
 
-                if (!tenMon || !formData.gia) {
-                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
-                    return;
-                }
+                // Nếu input bị khóa thì dùng value trực tiếp
+                const tenMon = tenMonInput.disabled ? tenMonInput.value : f.tenMon;
+                const gia = giaInput.disabled ? giaInput.value : f.gia;
 
-                // Chuẩn bị dữ liệu (backend sẽ tự động convert camelCase sang PascalCase)
+                if (!tenMon || !gia) return showAlert('Vui lòng nhập đầy đủ dữ liệu', 'warning');
+
+                if (tenMonInput.disabled && giaInput.disabled)
+                    return showAlert('Món đã bán — không thể sửa!', 'warning');
+
+                const laToppingDiKem =
+                    document.getElementById('laToppingDiKem').checked;
+
                 const data = {
-                    tenMon: tenMon,
-                    gia: parseFloat(formData.gia) || 0
+                    tenMon,
+                    gia: Number(gia),
+                    laToppingDiKem
                 };
 
-                // Chỉ thêm maMon khi sửa (không gửi khi thêm mới)
-                if (isEditMode && formData.maMon) {
-                    data.maMon = parseInt(formData.maMon) || 0;
-                }
+                if (isEditMode) data.maMon = Number(f.maMon);
 
-                let result;
+                let res;
+
                 if (isEditMode) {
-                    // Gọi API PUT
-                    result = await apiPut('/Mon/update', data);
-                    showAlert(result.message || 'Cập nhật món thành công!', 'success');
+                    res = await apiPut('/Mon/update', data);
+
+                    if (res?.error) return showAlert(res.message, 'danger');
+
+                    showAlert('Cập nhật món thành công!', 'success');
+
                 } else {
-                    // Gọi API POST - không gửi MaMon khi thêm mới
-                    result = await apiPost('/Mon/add', data);
-                    showAlert(result.message || 'Thêm món thành công!', 'success');
+                    res = await apiPost('/Mon/add', data);
+
+                    if (res?.error) return showAlert(res.message, 'danger');
+
+                    showAlert('Thêm món thành công!', 'success');
                 }
 
                 closeModal('monModal');
                 loadMon();
 
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
-            } catch (error) {
-                console.error('Error saving mon:', error);
-                showAlert('Lỗi khi lưu món: ' + error.message, 'danger');
+            } catch (err) {
+                showAlert('Lỗi khi lưu món: ' + err.message, 'danger');
             }
         }
 
         // Xóa món
         async function deleteMon(id) {
-            if (!confirmDelete('Bạn có chắc chắn muốn xóa món này?')) {
-                return;
-            }
-<<<<<<< HEAD
-            
-            try {
-                // Gọi API DELETE
-                const result = await apiDelete(`/Mon/delete/${id}`);
-                
-                showAlert(result.message || 'Xóa món thành công!', 'success');
-                loadMon();
-                
-=======
+            if (!confirmDelete('Bạn có chắc muốn xóa món này?')) return;
 
             try {
-                // Gọi API DELETE
-                const result = await apiDelete(`/Mon/delete/${id}`);
+                const res = await apiDelete(`/Mon/delete/${id}`);
 
-                showAlert(result.message || 'Xóa món thành công!', 'success');
+                if (res?.error) return showAlert(res.message, 'danger');
+
+                showAlert('Xóa món thành công!', 'success');
                 loadMon();
 
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
-            } catch (error) {
-                console.error('Error deleting mon:', error);
-                showAlert('Lỗi khi xóa món: ' + error.message, 'danger');
+            } catch (err) {
+                showAlert('Lỗi khi xóa món: ' + err.message, 'danger');
             }
         }
 
-<<<<<<< HEAD
-        document.addEventListener('DOMContentLoaded', function() {
-=======
-        // Load data khi trang load
-        document.addEventListener('DOMContentLoaded', function () {
-            // Khởi tạo tìm kiếm ngay khi trang load
-            initSearch();
-            // Load dữ liệu
->>>>>>> 1704115 (Cập nhật MonBUS và MonController - xử lý nhập giá và kiểm tra xem món có đc bán ra hay chưa)
+        // Khi trang vừa load → tải danh sách món
+        document.addEventListener('DOMContentLoaded', () => {
             loadMon();
         });
+
     </script>
+
 </body>
 </html>
-

@@ -54,6 +54,22 @@ namespace QLCF.BUS
         {
             try
             {
+                // Kiểm tra tài khoản đã tồn tại chưa
+                string sqlCheck = "SELECT COUNT(*) as count FROM nguoi_dung WHERE tai_khoan = @tai_khoan";
+                var checkParam = new Dictionary<string, object>
+                {
+                    {"@tai_khoan", nd.TaiKhoan}
+                };
+                DataTable dtCheck = _db.ExecuteQuery(sqlCheck, checkParam);
+                if (dtCheck.Rows.Count > 0)
+                {
+                    int count = Convert.ToInt32(dtCheck.Rows[0]["count"]);
+                    if (count > 0)
+                    {
+                        return "Tài khoản đã tồn tại. Vui lòng chọn tài khoản khác!";
+                    }
+                }
+
                 string sql = @"
                 INSERT INTO nguoi_dung (ho_ten, tai_khoan, mat_khau, ma_vt, hoat_dong)
                 VALUES (@ho_ten, @tai_khoan, @mat_khau, @ma_vt, @hoat_dong)";
@@ -70,6 +86,11 @@ namespace QLCF.BUS
             }
             catch (Exception ex)
             {
+                // Kiểm tra nếu lỗi do duplicate key
+                if (ex.Message.Contains("UNIQUE KEY") || ex.Message.Contains("duplicate key"))
+                {
+                    return "Tài khoản đã tồn tại. Vui lòng chọn tài khoản khác!";
+                }
                 return "Lỗi khi thêm người dùng: " + ex.Message;
             }
         }

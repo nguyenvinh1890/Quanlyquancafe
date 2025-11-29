@@ -8,7 +8,8 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Thanh bên (Sidebar) -->
+
+        <!-- Thanh điều hướng bên trái -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">☕</div>
@@ -98,7 +99,8 @@
 
         <!-- Nội dung chính -->
         <main class="main-content">
-            <!-- Thanh tiêu đề (Header) -->
+
+            <!-- Phần tiêu đề -->
             <header class="header">
                 <div class="header-left">
                     <h1>Quản lý Đơn hàng</h1>
@@ -114,7 +116,7 @@
                 </div>
             </header>
 
-            <!-- Khu vực nội dung chính -->
+            <!-- Nội dung bên trong -->
             <div class="content">
                 <div id="alertContainer"></div>
 
@@ -123,7 +125,8 @@
                         <h3>Danh sách Đơn hàng</h3>
                     </div>
                     <div class="card-body">
-                        <!-- Thanh hành động (tìm kiếm / tạo mới) -->
+
+                        <!-- Thanh tác vụ -->
                         <div class="action-bar">
                             <div class="search-box">
                                 <input type="text" id="searchInput" placeholder="Tìm kiếm đơn hàng...">
@@ -136,7 +139,7 @@
                             </div>
                         </div>
 
-                        <!-- Bảng hiển thị danh sách đơn hàng -->
+                        <!-- Bảng dữ liệu -->
                         <div class="table-container">
                             <table class="table">
                                 <thead>
@@ -165,7 +168,7 @@
         </main>
     </div>
 
-    <!-- Cửa sổ (Modal) thêm hoặc sửa đơn hàng -->
+    <!-- Cửa sổ Thêm / Sửa đơn hàng -->
     <div id="donHangModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -221,7 +224,43 @@
         </div>
     </div>
 
-    <!-- Cửa sổ chi tiết đơn hàng -->
+    <!-- Cửa sổ sửa chi tiết đơn hàng -->
+    <div id="suaChiTietModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sửa món trong đơn hàng</h3>
+                <button class="modal-close" onclick="closeModal('suaChiTietModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="suaChiTietForm">
+                    <input type="hidden" id="suaChiTietMaCT" name="maCT">
+                    <input type="hidden" id="suaChiTietMaDH" name="maDH">
+                    <input type="hidden" id="suaChiTietMaMon" name="maMon">
+
+                    <div class="form-group">
+                        <label>Tên món</label>
+                        <input type="text" id="suaChiTietTenMon" class="form-control" readonly style="background: #f5f5f5;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="suaChiTietSoLuong">Số lượng <span style="color: red;">*</span></label>
+                        <input type="number" id="suaChiTietSoLuong" name="soLuong" class="form-control" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="suaChiTietDonGia">Đơn giá <span style="color: red;">*</span></label>
+                        <input type="number" id="suaChiTietDonGia" name="donGia" class="form-control" min="0" step="1000" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('suaChiTietModal')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveSuaChiTiet()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cửa sổ hiển thị chi tiết đơn hàng -->
     <div id="chiTietModal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
@@ -233,7 +272,7 @@
                     <div class="spinner"></div>
                 </div>
 
-                <!-- Form thêm món -->
+                <!-- Form thêm món vào đơn -->
                 <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
                     <h4 style="margin-bottom: 15px;">Thêm món vào đơn hàng</h4>
                     <form id="themMonForm">
@@ -259,6 +298,7 @@
                                 <input type="number" id="chiTietDonGia" name="donGia" class="form-control" min="0" step="1000" required>
                             </div>
                         </div>
+
                         <div style="text-align: right; margin-top: 10px;">
                             <button type="button" class="btn btn-primary" onclick="themMonVaoDon()">➕ Thêm món</button>
                         </div>
@@ -271,353 +311,9 @@
         </div>
     </div>
 
+    <!-- Script -->
     <script src="js/app.js"></script>
     <script src="js/roles.js"></script>
-    <script>
-        let isEditMode = false;
 
-        // Load dropdown data
-        async function loadDropdowns() {
-            try {
-                // Load bàn từ API
-                const responseBan = await apiGet('/Ban/get-all');
-                const bans = Array.isArray(responseBan) ? responseBan : [];
-                const selectBan = document.getElementById('maBan');
-                bans.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.maBan;
-                    option.textContent = `${item.tenBan} - ${item.tenKhu}`;
-                    selectBan.appendChild(option);
-                });
-
-                // Load nhân viên từ API - chỉ lấy Admin (maVT=1) và Phục vụ (maVT=3)
-                const responseNV = await apiGet('/NguoiDung/get-all');
-                const allNhanViens = responseNV.data || (Array.isArray(responseNV) ? responseNV : []);
-
-                // Lọc chỉ lấy Admin (maVT=1) và Phục vụ (maVT=3)
-                const nhanViens = allNhanViens.filter(item => item.maVT === 1 || item.maVT === 3);
-
-                const selectNV = document.getElementById('moBoi');
-                selectNV.innerHTML = '<option value="">-- Chọn nhân viên --</option>';
-                nhanViens.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.maND;
-                    option.textContent = item.hoTen;
-                    selectNV.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error loading dropdowns:', error);
-                showAlert('Lỗi khi tải danh sách', 'danger');
-            }
-        }
-
-        // Load danh sách đơn hàng
-        async function loadDonHang() {
-            try {
-                // Gọi API thực tế
-                const response = await apiGet('/DonHang/get-all');
-                const data = Array.isArray(response) ? response : [];
-
-                const columns = [
-                    { field: 'maDH' },
-                    { field: 'maBan', render: (item) => item.maBan ? `Bàn ${item.maBan}` : 'N/A' },
-                    { field: 'loaiDH' },
-                    {
-                        field: 'trangThai',
-                        render: (item) => {
-                            const badgeClass = item.trangThai === 'Hoàn thành' ? 'badge-success' :
-                                item.trangThai === 'Đang xử lý' ? 'badge-warning' :
-                                    item.trangThai === 'Mới' ? 'badge-info' : 'badge-danger';
-                            return `<span class="badge ${badgeClass}">${item.trangThai}</span>`;
-                        }
-                    },
-                    { field: 'moBoiTen' },
-                    { field: 'moLuc', render: (item) => formatDateTime(item.moLuc) }
-                ];
-
-                const actions = (item) => `
-                        <div style="text-align: center;">
-                            <button class="btn btn-sm btn-info" onclick="viewChiTiet(${item.maDH})" title="Xem chi tiết">👁️ Chi tiết</button>
-                            <button class="btn btn-sm btn-warning" onclick="editDonHang(${item.maDH})">✏️ Sửa</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteDonHang(${item.maDH})">🗑️ Xóa</button>
-                        </div>
-                    `;
-
-                renderTable('donHangTable', data, columns, actions);
-                searchTable('searchInput', 'donHangTable');
-            } catch (error) {
-                console.error('Error loading don hang:', error);
-                showAlert('Lỗi khi tải danh sách đơn hàng', 'danger');
-            }
-        }
-
-
-        // Mở modal thêm
-        function openAddModal() {
-            isEditMode = false;
-            document.getElementById('modalTitle').textContent = 'Tạo đơn hàng';
-            resetForm('donHangForm');
-            openModal('donHangModal');
-        }
-
-        // Sửa đơn hàng
-        async function editDonHang(id) {
-            try {
-                // Lấy dữ liệu từ API
-                const response = await apiGet('/DonHang/get-all');
-                const allData = Array.isArray(response) ? response : [];
-                const donHang = allData.find(item => item.maDH === id);
-
-                if (donHang) {
-                    isEditMode = true;
-                    document.getElementById('modalTitle').textContent = 'Sửa đơn hàng';
-                    fillForm('donHangForm', donHang);
-                    openModal('donHangModal');
-                }
-            } catch (error) {
-                console.error('Error loading don hang:', error);
-                showAlert('Lỗi khi tải thông tin đơn hàng', 'danger');
-            }
-        }
-
-        // Lưu đơn hàng
-        async function saveDonHang() {
-            try {
-                const formData = getFormData('donHangForm');
-
-                if (!formData.loaiDH) {
-                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
-                    return;
-                }
-
-                // Gọi API
-                if (isEditMode) {
-                    await apiPut('/DonHang/update', formData);
-                    showAlert('Cập nhật đơn hàng thành công!', 'success');
-                } else {
-                    await apiPost('/DonHang/add', formData);
-                    showAlert('Tạo đơn hàng thành công!', 'success');
-                }
-
-                closeModal('donHangModal');
-                loadDonHang();
-            } catch (error) {
-                console.error('Error saving don hang:', error);
-                showAlert('Lỗi khi lưu đơn hàng', 'danger');
-            }
-        }
-
-        // Xóa đơn hàng
-        async function deleteDonHang(id) {
-            if (!confirmDelete('Bạn có chắc chắn muốn xóa đơn hàng này?')) {
-                return;
-            }
-
-            try {
-                await apiDelete(`/DonHang/delete/${id}`);
-                showAlert('Xóa đơn hàng thành công!', 'success');
-                loadDonHang();
-            } catch (error) {
-                console.error('Error deleting don hang:', error);
-                showAlert('Lỗi khi xóa đơn hàng', 'danger');
-            }
-        }
-
-        let currentMaDH = null; // Lưu mã đơn hàng hiện tại đang xem
-
-        // Load danh sách món và size cho form thêm món
-        async function loadMonVaSize() {
-            try {
-                // Load món
-                const responseMon = await apiGet('/Mon/get-all');
-                const mons = responseMon.data || (Array.isArray(responseMon) ? responseMon : []);
-                const selectMon = document.getElementById('chiTietMaMon');
-                selectMon.innerHTML = '<option value="">-- Chọn món --</option>';
-                mons.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.maMon;
-                    option.textContent = item.tenMon;
-                    selectMon.appendChild(option);
-                });
-
-                // Load size
-                const responseSize = await apiGet('/SizeMon/get-all');
-                const sizes = responseSize.data || (Array.isArray(responseSize) ? responseSize : []);
-                const selectSize = document.getElementById('chiTietMaSize');
-                selectSize.innerHTML = '<option value="">-- Chọn size --</option>';
-                sizes.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.maSize;
-                    option.textContent = `${item.tenMon} - ${item.tenSize} (${formatCurrency(item.gia)})`;
-                    option.dataset.gia = item.gia; // Lưu giá để tự động điền
-                    selectSize.appendChild(option);
-                });
-
-                // Khi chọn size, tự động điền giá
-                selectSize.addEventListener('change', function () {
-                    const selectedOption = this.options[this.selectedIndex];
-                    if (selectedOption.dataset.gia) {
-                        document.getElementById('chiTietDonGia').value = selectedOption.dataset.gia;
-                    }
-                });
-            } catch (error) {
-                console.error('Error loading mon and size:', error);
-            }
-        }
-
-        // Xem chi tiết đơn hàng
-        async function viewChiTiet(maDH) {
-            try {
-                currentMaDH = maDH; // Lưu mã đơn hàng
-                document.getElementById('chiTietModalTitle').textContent = `Chi tiết đơn hàng #${maDH}`;
-                document.getElementById('chiTietContent').innerHTML = '<div class="spinner"></div>';
-                openModal('chiTietModal');
-
-                // Load danh sách món và size
-                await loadMonVaSize();
-
-                // Lấy thông tin đơn hàng
-                const responseDH = await apiGet('/DonHang/get-all');
-                const allDonHang = Array.isArray(responseDH) ? responseDH : [];
-                const donHang = allDonHang.find(item => item.maDH === maDH);
-
-                // Lấy chi tiết đơn hàng
-                await loadChiTietDonHang(maDH, donHang);
-            } catch (error) {
-                console.error('Error loading chi tiet:', error);
-                document.getElementById('chiTietContent').innerHTML = '<p style="color: red;">Lỗi khi tải chi tiết đơn hàng: ' + error.message + '</p>';
-            }
-        }
-
-        // Load và hiển thị chi tiết đơn hàng
-        async function loadChiTietDonHang(maDH, donHang) {
-            try {
-                const response = await apiGet(`/ChiTietDonHang/get-by-donhang/${maDH}`);
-                const chiTietList = Array.isArray(response) ? response : [];
-
-                let html = '';
-
-                if (donHang) {
-                    html += `
-                            <div style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
-                                <h4 style="margin: 0 0 10px 0;">Thông tin đơn hàng</h4>
-                                <p><strong>Mã đơn hàng:</strong> ${donHang.maDH}</p>
-                                <p><strong>Bàn:</strong> ${donHang.maBan ? `Bàn ${donHang.maBan}` : 'N/A'}</p>
-                                <p><strong>Loại:</strong> ${donHang.loaiDH}</p>
-                                <p><strong>Trạng thái:</strong> ${donHang.trangThai}</p>
-                                <p><strong>Mở bởi:</strong> ${donHang.moBoiTen || 'N/A'}</p>
-                                <p><strong>Mở lúc:</strong> ${formatDateTime(donHang.moLuc)}</p>
-                            </div>
-                        `;
-                }
-
-                if (chiTietList.length > 0) {
-                    html += `
-                            <h4 style="margin-bottom: 15px;">Danh sách món đã gọi</h4>
-                            <div class="table-container">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>STT</th>
-                                            <th>Tên món</th>
-                                            <th>Size</th>
-                                            <th>Số lượng</th>
-                                            <th>Đơn giá</th>
-                                            <th>Thành tiền</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                        `;
-
-                    let tongTien = 0;
-                    chiTietList.forEach((item, index) => {
-                        tongTien += item.thanhTien || 0;
-                        html += `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${item.tenMon || 'N/A'}</td>
-                                    <td>${item.tenSize || 'N/A'}</td>
-                                    <td>${item.soLuong || 0}</td>
-                                    <td>${formatCurrency(item.donGia || 0)}</td>
-                                    <td><strong>${formatCurrency(item.thanhTien || 0)}</strong></td>
-                                </tr>
-                            `;
-                    });
-
-                    html += `
-                                    </tbody>
-                                    <tfoot>
-                                        <tr style="background: #f0f0f0; font-weight: bold;">
-                                            <td colspan="5" style="text-align: right;">Tổng tiền:</td>
-                                            <td>${formatCurrency(tongTien)}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        `;
-                } else {
-                    html += '<p style="text-align: center; padding: 20px; color: #999;">Đơn hàng này chưa có món nào.</p>';
-                }
-
-                document.getElementById('chiTietContent').innerHTML = html;
-            } catch (error) {
-                console.error('Error loading chi tiet:', error);
-                document.getElementById('chiTietContent').innerHTML = '<p style="color: red;">Lỗi khi tải chi tiết đơn hàng: ' + error.message + '</p>';
-            }
-        }
-
-        // Thêm món vào đơn hàng
-        async function themMonVaoDon() {
-            if (!currentMaDH) {
-                showAlert('Không tìm thấy đơn hàng', 'danger');
-                return;
-            }
-
-            try {
-                const formData = getFormData('themMonForm');
-
-                if (!formData.maMon || !formData.soLuong || !formData.donGia) {
-                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
-                    return;
-                }
-
-                // Chuẩn bị dữ liệu (backend sẽ tính thanh_tien = so_luong * don_gia)
-                const data = {
-                    maDH: currentMaDH,
-                    maMon: parseInt(formData.maMon),
-                    maSize: formData.maSize ? parseInt(formData.maSize) : null,
-                    soLuong: parseInt(formData.soLuong) || 1,
-                    donGia: parseFloat(formData.donGia) || 0
-                };
-
-                // Gọi API thêm món
-                const result = await apiPost('/ChiTietDonHang/add', data);
-
-                showAlert(result.message || 'Thêm món vào đơn hàng thành công!', 'success');
-
-                // Reset form
-                resetForm('themMonForm');
-                document.getElementById('chiTietDonGia').value = '';
-
-                // Load lại chi tiết đơn hàng
-                const responseDH = await apiGet('/DonHang/get-all');
-                const allDonHang = Array.isArray(responseDH) ? responseDH : [];
-                const donHang = allDonHang.find(item => item.maDH === currentMaDH);
-                await loadChiTietDonHang(currentMaDH, donHang);
-
-            } catch (error) {
-                console.error('Error adding mon to don hang:', error);
-                showAlert('Lỗi khi thêm món vào đơn hàng: ' + error.message, 'danger');
-            }
-        }
-
-        // Load data khi trang load
-        document.addEventListener('DOMContentLoaded', function () {
-            loadDropdowns();
-            loadDonHang();
-        });
-    </script>
 </body>
 </html>
-
-

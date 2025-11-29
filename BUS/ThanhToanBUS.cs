@@ -53,14 +53,23 @@ namespace QLCF.BUS
         {
             try
             {
+                // Nếu không có tra_luc, tự động set là thời gian hiện tại
+                if (tt.TraLuc == default(DateTime))
+                {
+                    tt.TraLuc = DateTime.Now;
+                }
+
+                // Xử lý NULL cho thu_boi
+                object thuBoiValue = tt.ThuBoi.HasValue && tt.ThuBoi.Value > 0 ? (object)tt.ThuBoi.Value : DBNull.Value;
+
                 string sql = @"INSERT INTO thanh_toan (ma_hd, phuong_thuc, so_tien, thu_boi, tra_luc)
                                VALUES (@ma_hd, @phuong_thuc, @so_tien, @thu_boi, @tra_luc)";
                 var param = new Dictionary<string, object>
                 {
                     {"@ma_hd", tt.MaHD},
-                    {"@phuong_thuc", tt.PhuongThuc},
+                    {"@phuong_thuc", tt.PhuongThuc ?? ""},
                     {"@so_tien", tt.SoTien},
-                    {"@thu_boi", tt.ThuBoi},
+                    {"@thu_boi", thuBoiValue},
                     {"@tra_luc", tt.TraLuc}
                 };
 
@@ -77,15 +86,18 @@ namespace QLCF.BUS
         {
             try
             {
+                // Xử lý NULL cho thu_boi
+                object thuBoiValue = tt.ThuBoi.HasValue && tt.ThuBoi.Value > 0 ? (object)tt.ThuBoi.Value : DBNull.Value;
+
                 string sql = @"UPDATE thanh_toan 
                                SET phuong_thuc=@phuong_thuc, so_tien=@so_tien, thu_boi=@thu_boi 
                                WHERE ma_tt=@ma_tt";
                 var param = new Dictionary<string, object>
                 {
                     {"@ma_tt", tt.MaTT},
-                    {"@phuong_thuc", tt.PhuongThuc},
+                    {"@phuong_thuc", tt.PhuongThuc ?? ""},
                     {"@so_tien", tt.SoTien},
-                    {"@thu_boi", tt.ThuBoi}
+                    {"@thu_boi", thuBoiValue}
                 };
 
                 int rows = _db.ExecuteNonQuery(sql, param);

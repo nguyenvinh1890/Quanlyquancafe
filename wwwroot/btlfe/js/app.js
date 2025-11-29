@@ -171,22 +171,30 @@ async function apiDelete(endpoint) {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         });
-        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Thử parse JSON error message
+            try {
+                const errorJson = await response.json();
+                const message = errorJson.message || errorJson.error || JSON.stringify(errorJson);
+                return { error: true, message: message };
+            } catch {
+                // Nếu không parse được JSON, dùng text
+                const errorText = await response.text().catch(() => '');
+                const message = errorText || `HTTP error! status: ${response.status}`;
+                return { error: true, message: message };
+            }
         }
-        
-        // Backend trả về message (string) hoặc object, parse JSON
-        const result = await response.json();
-        return result;  // trả về response từ backend
+
+        // Một số BE trả về text -> vẫn coi là thành công
+        const result = await parseResponseSafe(response);
+        return result || { message: 'Xóa thành công' };
     } catch (error) {
         console.error('API DELETE Error:', error);
-        showAlert('Lỗi khi xóa dữ liệu: ' + error.message, 'danger');
-        return null;  // trả về null nếu lỗi
+        return { error: true, message: error.message || 'Lỗi khi xóa dữ liệu' };
     }
 }
-
-// 
+        
+   
 //  - Xác thực người dùng
 // Sử dụng LocalStorage để lưu token và thông tin user
 // 
@@ -263,16 +271,20 @@ function createTableRow(data, columns, actions) {
 
 // Render toàn bộ bảng - hàm này dùng ở mọi trang quản lý
 function renderTable(tableBodyId, data, columns, actions) {
+    console.log(`🎨 renderTable được gọi với tableBodyId: ${tableBodyId}, data length: ${data?.length || 0}`);
     const tbody = document.getElementById(tableBodyId);
-    if (!tbody) return;  // không tìm thấy tbody thì thoát
-    
-    tbody.innerHTML = '';  // xóa hết dữ liệu cũ
-    
-    // Nếu không có dữ liệu thì hiển thị "Không có dữ liệu"
+    if (!tbody) {
+        console.error(`❌ Không tìm thấy element với id: ${tableBodyId}`);
+        return;
+    }
+
+    tbody.innerHTML = '';
+
     if (!data || data.length === 0) {
+        console.log('⚠️ Không có dữ liệu để render');
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = columns.length + (actions ? 1 : 0);  // gộp tất cả cột
+        td.colSpan = columns.length + (actions ? 1 : 0);
         td.textContent = 'Không có dữ liệu';
         td.style.textAlign = 'center';
         td.style.padding = '40px';
@@ -281,43 +293,116 @@ function renderTable(tableBodyId, data, columns, actions) {
         tbody.appendChild(tr);
         return;
     }
-    
-    // Có dữ liệu thì render từng dòng
-    data.forEach(item => {
-        const row = createTableRow(item, columns, actions);
-        tbody.appendChild(row);  // thêm dòng vào tbody
-    });
-}
 
+    console.log(`✅ Bắt đầu render ${data.length} dòng...`);
+    data.forEach((item, index) => {
+        const row = createTableRow(item, columns, actions);
+        tbody.appendChild(row);
+    });
+    console.log(`✅ Đã render xong ${data.length} dòng vào bảng ${tableBodyId}`);
+}
 // 
 // SEARCH & FILTER - Tìm kiếm trong bảng
 // 
 
 // Hàm tìm kiếm real-time - gõ vào ô search là lọc ngay
+const searchHandlers = new Map();
+
 function searchTable(inputId, tableBodyId) {
-    const input = document.getElementById(inputId);    // ô input search
-    const tbody = document.getElementById(tableBodyId); // tbody của bảng
-    
-    if (!input || !tbody) return;  // không tìm thấy thì thoát
-    
-    
-    input.addEventListener('keyup', function() {
-        const filter = this.value.toLowerCase();  // chuyển text search về chữ thường
-        const rows = tbody.getElementsByTagName('tr');  // lấy tất cả dòng
-        
-        // Duyệt qua từng dòng
+    const input = document.getElementById(inputId);
+    const tbody = document.getElementById(tableBodyId);
+
+    if (!input || !tbody) {
+        console.warn(`⚠️ Không tìm thấy input (${inputId}) hoặc table (${tableBodyId})`);
+        return;
+    }
+
+    // Xóa event listener cũ nếu có (để tránh gắn nhiều lần)
+    const key = `${inputId}_${tableBodyId}`;
+    if (searchHandlers.has(key)) {
+        const oldHandler = searchHandlers.get(key);
+        input.removeEventListener('keyup', oldHandler);
+        input.removeEventListener('input', oldHandler);
+    }
+
+    // Tạo handler mới
+    const handler = function () {
+        const filter = this.value.toLowerCase().trim();
+        const rows = tbody.getElementsByTagName('tr');
+        let visibleCount = 0;
+
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
-            const text = row.textContent.toLowerCase();  // nội dung cả dòng
-            
-            // Nếu dòng có chứa text search → hiển thị, không thì ẩn
-            if (text.indexOf(filter) > -1) {
-                row.style.display = '';      // hiển thị
+            // Bỏ qua các row không có dữ liệu (như "Không có dữ liệu")
+            if (row.cells.length === 1 && row.cells[0].colSpan > 1) {
+                // Đây là row "Không có dữ liệu", chỉ hiển thị nếu không có filter
+                row.style.display = filter === '' ? '' : 'none';
+                continue;
+            }
+
+            const text = row.textContent.toLowerCase();
+
+            if (filter === '' || text.indexOf(filter) > -1) {
+                row.style.display = '';
+                visibleCount++;
             } else {
-                row.style.display = 'none';  // ẩn
+                row.style.display = 'none';
             }
         }
-    });
+        // Chỉ tìm kiếm trong cột đầu tiên (mã) và cột thứ hai (tên)
+        // Bỏ qua các cột khác như trạng thái, thao tác, v.v.
+        let searchText = '';
+        if (row.cells.length >= 1) {
+            // Cột đầu tiên (mã)
+            searchText += (row.cells[0].textContent || '').toLowerCase();
+        }
+        if (row.cells.length >= 2) {
+            // Cột thứ hai (tên)
+            searchText += ' ' + (row.cells[1].textContent || '').toLowerCase();
+        }
+
+        if (filter === '' || searchText.indexOf(filter) > -1) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    }
+
+        // Nếu không có kết quả, hiển thị thông báo
+        if (filter !== '' && visibleCount === 0) {
+            // Kiểm tra xem đã có thông báo "Không tìm thấy" chưa
+            let noResultsRow = tbody.querySelector('.no-results-row');
+            if (!noResultsRow) {
+                noResultsRow = document.createElement('tr');
+                noResultsRow.className = 'no-results-row';
+                const td = document.createElement('td');
+                td.colSpan = tbody.querySelector('tr')?.cells.length || 10;
+                td.textContent = 'Không tìm thấy kết quả';
+                td.style.textAlign = 'center';
+                td.style.padding = '20px';
+                td.style.color = 'var(--text-light)';
+                noResultsRow.appendChild(td);
+                tbody.appendChild(noResultsRow);
+            }
+            noResultsRow.style.display = '';
+        } else {
+            // Ẩn thông báo "Không tìm thấy" nếu có
+            const noResultsRow = tbody.querySelector('.no-results-row');
+            if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+        }
+    };
+
+    // Lưu handler để có thể xóa sau
+    searchHandlers.set(key, handler);
+
+    // Gắn event listener cho cả keyup và input (để hỗ trợ paste, v.v.)
+    input.addEventListener('keyup', handler);
+    input.addEventListener('input', handler);
+
+    console.log(`✅ Đã kích hoạt tìm kiếm cho ${inputId} -> ${tableBodyId}`);
 }
 
 // 

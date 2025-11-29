@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QLCF.BUS;
 using QLCF.Model;
-using QLCF.Model.DTOs;
 
 namespace QLCF.Controllers
 {
@@ -16,63 +15,64 @@ namespace QLCF.Controllers
             _bus = bus;
         }
 
-        //  Lấy danh sách tất cả người dùng
         [HttpGet("get-all")]
         public IActionResult GetAll()
         {
-            var (success, message, data) = _bus.GetAll();
-            if (!success)
-                return BadRequest(new { success = false, message });
-
-            return Ok(new { success = true, message, data });
+            var result = _bus.GetAll();
+            if (!result.Item1) return BadRequest(result.Item2);
+            return Ok(result.Item3);
         }
 
-        //  Thêm người dùng mới
         [HttpPost("add")]
         public IActionResult Add([FromBody] NguoiDung nd)
         {
-            if (nd == null)
-                return BadRequest(new { success = false, message = "Dữ liệu người dùng không hợp lệ" });
-
             var msg = _bus.Add(nd);
-            return Ok(new { success = true, message = msg });
+            // Kiểm tra nếu có lỗi (message chứa "đã tồn tại", "Lỗi", "Không thể")
+            if (msg.Contains("đã tồn tại") || msg.Contains("Lỗi") || msg.Contains("Không thể"))
+            {
+                return BadRequest(new { message = msg });
+            }
+            return Ok(new { message = msg });
         }
 
-        //  Cập nhật thông tin người dùng
         [HttpPut("update")]
         public IActionResult Update([FromBody] NguoiDung nd)
         {
-            if (nd == null)
-                return BadRequest(new { success = false, message = "Dữ liệu người dùng không hợp lệ" });
-
             var msg = _bus.Update(nd);
-            return Ok(new { success = true, message = msg });
+            return Ok(msg);
         }
 
-        //  Xóa người dùng theo ID
         [HttpDelete("delete/{id}")]
         public IActionResult Delete(int id)
         {
-            if (id <= 0)
-                return BadRequest(new { success = false, message = "ID không hợp lệ" });
-
             var msg = _bus.Delete(id);
-            return Ok(new { success = true, message = msg });
+            return Ok(msg);
         }
 
-        //  Đăng nhập
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public IActionResult Login([FromBody] Model.DTOs.LoginRequest request)
         {
-            if (request == null)
-                return BadRequest(new { success = false, message = "Dữ liệu đăng nhập không hợp lệ" });
-
             var result = _bus.Login(request);
 
             if (!result.Success)
-                return BadRequest(result);
+            {
+                return BadRequest(new { message = result.Message });
+            }
 
-            return Ok(result);
+            // Trả về token và user info (hiện tại chưa có JWT, tạm thời trả về fake token)
+            
+            return Ok(new
+            {
+                token = "jwt-token-" + result.Data?.MaND, // Tạm thời - cần thay bằng JWT thật
+                user = new
+                {
+                    maND = result.Data?.MaND,
+                    hoTen = result.Data?.HoTen,
+                    taiKhoan = result.Data?.TaiKhoan,
+                    tenVaiTro = result.Data?.TenVaiTro,
+                    maVT = result.Data?.MaVT
+                }
+            });
         }
     }
 }

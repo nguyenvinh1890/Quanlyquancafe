@@ -19,11 +19,16 @@ namespace QLCF.BUS
         {
             try
             {
+                // Lấy giá của size "Vừa" (nếu có), nếu không có thì lấy MIN giá của tất cả size
                 string sql = @"
-        SELECT m.ma_mon, m.ten_mon, ISNULL(MIN(s.gia), 0) AS gia
+        SELECT m.ma_mon, m.ten_mon, 
+               ISNULL(s_vua.gia, 
+                      (SELECT ISNULL(MIN(s2.gia), 0) 
+                       FROM size_mon s2 
+                       WHERE s2.ma_mon = m.ma_mon)) AS gia,
+               ISNULL(m.la_topping_di_kem, 0) AS la_topping_di_kem
         FROM mon m
-        LEFT JOIN size_mon s ON m.ma_mon = s.ma_mon
-        GROUP BY m.ma_mon, m.ten_mon";
+        LEFT JOIN size_mon s_vua ON m.ma_mon = s_vua.ma_mon AND s_vua.ten_size = 'Vừa'";
 
                 DataTable dt = _db.ExecuteQuery(sql);
                 var result = new List<Mon>();
@@ -34,7 +39,8 @@ namespace QLCF.BUS
                     {
                         MaMon = (int)r["ma_mon"],
                         TenMon = r["ten_mon"].ToString() ?? "",
-                        Gia = Convert.ToDecimal(r["gia"])
+                        Gia = Convert.ToDecimal(r["gia"]),
+                        LaToppingDiKem = r["la_topping_di_kem"] != DBNull.Value && Convert.ToBoolean(r["la_topping_di_kem"])
                     });
                 }
 
@@ -52,13 +58,14 @@ namespace QLCF.BUS
             {
                 // Insert món mới và lấy ma_mon vừa tạo
                 string sql = @"
-                    INSERT INTO mon(ten_mon) 
-                    VALUES (@ten_mon);
+                    INSERT INTO mon(ten_mon, la_topping_di_kem) 
+                    VALUES (@ten_mon, @la_topping_di_kem);
                     SELECT SCOPE_IDENTITY() AS ma_mon;";
 
                 var parameters = new Dictionary<string, object>
                 {
-                    {"@ten_mon", mon.TenMon}
+                    {"@ten_mon", mon.TenMon},
+                    {"@la_topping_di_kem", mon.LaToppingDiKem ? 1 : 0}
                 };
 
                 // Execute và lấy ma_mon vừa tạo
@@ -96,8 +103,17 @@ namespace QLCF.BUS
         {
             try
             {
-                // Kiểm tra xem món đã được bán ra chưa
-                string sqlCheck = "SELECT COUNT(*) as count FROM chi_tiet_don WHERE ma_mon = @ma_mon";
+                // Kiểm tra xem món đã được bán ra chưa (chỉ tính khi đơn hàng đã thanh toán)
+                // Đơn hàng đã thanh toán = có record trong bảng thanh_toan HOẶC hóa đơn có trang_thai = 'Đã thanh toán'
+                string sqlCheck = @"
+                    SELECT COUNT(*) as count 
+                    FROM chi_tiet_don ctd
+                    INNER JOIN don_hang dh ON ctd.ma_dh = dh.ma_dh
+                    INNER JOIN hoa_don hd ON dh.ma_dh = hd.ma_dh
+                    LEFT JOIN thanh_toan tt ON hd.ma_hd = tt.ma_hd
+                    WHERE ctd.ma_mon = @ma_mon
+                      AND (tt.ma_tt IS NOT NULL OR hd.trang_thai = 'Đã thanh toán')";
+
                 var checkParams = new Dictionary<string, object>
                 {
                     {"@ma_mon", mon.MaMon}
@@ -112,31 +128,45 @@ namespace QLCF.BUS
                     hasSold = count > 0;
                 }
 
-                // Nếu món đã được bán ra, kiểm tra xem có sửa tên không
+                // Nếu món đã được bán ra, không cho phép sửa tên và giá
                 if (hasSold)
                 {
-                    // Lấy tên món hiện tại trong database
-                    string sqlGetCurrent = "SELECT ten_mon FROM mon WHERE ma_mon = @ma_mon";
+                    // Lấy thông tin món hiện tại trong database
+                    string sqlGetCurrent = @"SELECT ten_mon, 
+                                            (SELECT gia FROM size_mon WHERE ma_mon = @ma_mon AND ten_size = 'Vừa') AS gia_vua
+                                            FROM mon WHERE ma_mon = @ma_mon";
                     DataTable dtCurrent = _db.ExecuteQuery(sqlGetCurrent, checkParams);
 
                     if (dtCurrent.Rows.Count > 0)
                     {
                         string currentTenMon = dtCurrent.Rows[0]["ten_mon"].ToString() ?? "";
+                        decimal currentGia = 0;
+                        if (dtCurrent.Rows[0]["gia_vua"] != DBNull.Value)
+                        {
+                            currentGia = Convert.ToDecimal(dtCurrent.Rows[0]["gia_vua"]);
+                        }
 
-                        // Nếu tên mới khác tên cũ, không cho phép sửa
+                        // Kiểm tra xem có thay đổi tên không
                         if (currentTenMon != mon.TenMon)
                         {
-                            return "Không thể sửa tên món này vì món đã được bán ra. Chỉ có thể sửa giá!";
+                            return "Món đã được bán ra, không thể sửa tên món!";
+                        }
+
+                        // Kiểm tra xem có thay đổi giá không
+                        if (currentGia != mon.Gia)
+                        {
+                            return "Món đã được bán ra, không thể sửa giá!";
                         }
                     }
                 }
 
-                // Cập nhật tên món trong bảng mon
-                string sql = "UPDATE mon SET ten_mon = @ten_mon WHERE ma_mon = @ma_mon";
+                // Cập nhật tên món và la_topping_di_kem trong bảng mon
+                string sql = "UPDATE mon SET ten_mon = @ten_mon, la_topping_di_kem = @la_topping_di_kem WHERE ma_mon = @ma_mon";
                 var parameters = new Dictionary<string, object>
                 {
                     {"@ten_mon", mon.TenMon},
-                    {"@ma_mon", mon.MaMon}
+                    {"@ma_mon", mon.MaMon},
+                    {"@la_topping_di_kem", mon.LaToppingDiKem ? 1 : 0}
                 };
 
                 int rows = _db.ExecuteNonQuery(sql, parameters);
@@ -203,7 +233,17 @@ namespace QLCF.BUS
         {
             try
             {
-                string sql = "SELECT COUNT(*) as count FROM chi_tiet_don WHERE ma_mon = @ma_mon";
+                // Kiểm tra món đã bán ra = món có trong chi_tiet_don của đơn hàng đã thanh toán
+                // Đơn hàng đã thanh toán = có record trong bảng thanh_toan HOẶC hóa đơn có trang_thai = 'Đã thanh toán'
+                string sql = @"
+                    SELECT COUNT(*) as count 
+                    FROM chi_tiet_don ctd
+                    INNER JOIN don_hang dh ON ctd.ma_dh = dh.ma_dh
+                    INNER JOIN hoa_don hd ON dh.ma_dh = hd.ma_dh
+                    LEFT JOIN thanh_toan tt ON hd.ma_hd = tt.ma_hd
+                    WHERE ctd.ma_mon = @ma_mon
+                      AND (tt.ma_tt IS NOT NULL OR hd.trang_thai = 'Đã thanh toán')";
+
                 var parameters = new Dictionary<string, object>
                 {
                     {"@ma_mon", maMon}
