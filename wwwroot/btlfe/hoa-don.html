@@ -77,7 +77,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="ca-lam.html">
+                    <a href="calam.html">
                         <span class="icon">🕐</span>
                         <span>Ca làm</span>
                     </a>
@@ -404,12 +404,12 @@
                 ];
 
                 const actions = (i) => `
-                        <div style="text-align:center;">
-                            <button class="btn btn-sm btn-primary" onclick="printHoaDon(${i.maHD})">🖨️ In</button>
-                            <button class="btn btn-sm btn-warning" onclick="editHoaDon(${i.maHD})">✏️</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteHoaDon(${i.maHD})">🗑️</button>
-                        </div>
-                    `;
+                            <div style="text-align:center;">
+                                <button class="btn btn-sm btn-primary" onclick="printHoaDon(${i.maHD})">🖨️ In</button>
+                                <button class="btn btn-sm btn-warning" onclick="editHoaDon(${i.maHD})">✏️</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteHoaDon(${i.maHD})">🗑️</button>
+                            </div>
+                        `;
 
                 renderTable('hoaDonTable', data, columns, actions);
                 searchTable('searchInput', 'hoaDonTable');

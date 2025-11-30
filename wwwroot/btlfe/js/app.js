@@ -6,6 +6,9 @@
 // Địa chỉ API Backend 
 const API_BASE_URL = 'https://localhost:44390/api';
 
+// Hiển thị thông tin API URL khi load
+console.log('🔗 API Base URL:', API_BASE_URL);
+
 
 
 
@@ -18,9 +21,9 @@ function showAlert(message, type = 'info') {
     const alert = document.createElement('div');  // tạo thẻ div mới
     alert.className = `alert alert-${type}`;      // thêm class CSS
     alert.innerHTML = message;                     // nội dung thông báo
-    
+
     alertContainer.appendChild(alert);             // thêm vào trang
-    
+
     // Tự động xóa sau 5 giây
     setTimeout(() => {
         alert.remove();
@@ -74,7 +77,7 @@ function closeModal(modalId) {
 }
 
 // Đóng modal khi click vào nền đen phía sau
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (event.target.classList.contains('modal')) {
         event.target.classList.remove('active');
     }
@@ -89,23 +92,45 @@ window.onclick = function(event) {
 // Ví dụ: const data = await apiGet('/KhuVuc');
 async function apiGet(endpoint) {
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const url = `${API_BASE_URL}${endpoint}`;
+        console.log(`📡 API GET: ${url}`);
+
+        const response = await fetch(url, {
             method: 'GET',                    // phương thức GET
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getAuthToken()}`  // token xác thực
-            }
+            },
+            mode: 'cors'  // Explicitly enable CORS
         });
-        
+
+        console.log(`📥 Response status: ${response.status} for ${url}`);
+
         // Kiểm tra response có OK không (status 200-299)
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text().catch(() => 'Unknown error');
+            console.error(`❌ API Error ${response.status}:`, errorText);
+            throw new Error(`HTTP ${response.status}: ${errorText || 'Unknown error'}`);
         }
-        
-        return await response.json();  // chuyển response thành JSON
+
+        const data = await response.json();
+        console.log(`✅ API GET success: ${endpoint}`, data);
+        return data;  // chuyển response thành JSON
     } catch (error) {
-        console.error('API GET Error:', error);
-        showAlert('Lỗi khi tải dữ liệu: ' + error.message, 'danger');
+        console.error('❌ API GET Error:', error);
+        console.error('Error details:', {
+            endpoint,
+            url: `${API_BASE_URL}${endpoint}`,
+            message: error.message,
+            stack: error.stack
+        });
+
+        // Chỉ hiển thị alert nếu có container
+        if (typeof showAlert === 'function') {
+            const errorMsg = error.message || 'Không thể kết nối đến server. Kiểm tra backend đã chạy chưa?';
+            showAlert('Lỗi khi tải dữ liệu: ' + errorMsg, 'danger');
+        }
+
         return null;  // trả về null nếu lỗi
     }
 }
@@ -114,23 +139,33 @@ async function apiGet(endpoint) {
 // Ví dụ: await apiPost('/KhuVuc', {tenKV: 'Tầng 1', moTa: 'Khu vực tầng 1'});
 async function apiPost(endpoint, data) {
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const url = `${API_BASE_URL}${endpoint}`;
+        console.log(`📡 API POST: ${url}`, data);
+
+        const response = await fetch(url, {
             method: 'POST',                    // phương thức POST
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getAuthToken()}`
             },
-            body: JSON.stringify(data)         // chuyển object thành JSON string
+            body: JSON.stringify(data),         // chuyển object thành JSON string
+            mode: 'cors'
         });
-        
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text().catch(() => 'Unknown error');
+            console.error(`❌ API POST Error ${response.status}:`, errorText);
+            throw new Error(`HTTP ${response.status}: ${errorText || 'Unknown error'}`);
         }
-        
-        return await response.json();
+
+        const result = await response.json();
+        console.log(`✅ API POST success: ${endpoint}`, result);
+        return result;
     } catch (error) {
-        console.error('API POST Error:', error);
-        showAlert('Lỗi khi thêm dữ liệu: ' + error.message, 'danger');
+        console.error('❌ API POST Error:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('Lỗi khi thêm dữ liệu: ' + (error.message || 'Không thể kết nối đến server'), 'danger');
+        }
         return null;
     }
 }
@@ -139,23 +174,48 @@ async function apiPost(endpoint, data) {
 // Ví dụ: await apiPut('/KhuVuc/1', {tenKV: 'Tầng 1 Mới'});
 async function apiPut(endpoint, data) {
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const url = `${API_BASE_URL}${endpoint}`;
+        console.log(`📡 API PUT: ${url}`, data);
+
+        const response = await fetch(url, {
             method: 'PUT',                     // phương thức PUT (update)
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getAuthToken()}`
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            mode: 'cors'
         });
-        
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text().catch(() => 'Unknown error');
+            console.error(`❌ API PUT Error ${response.status}:`, errorText);
+            throw new Error(`HTTP ${response.status}: ${errorText || 'Unknown error'}`);
         }
-        
-        return await response.json();
+
+        const result = await response.json();
+        console.log(`✅ API PUT success: ${endpoint}`, result);
+        return result;
     } catch (error) {
-        console.error('API PUT Error:', error);
-        showAlert('Lỗi khi cập nhật dữ liệu: ' + error.message, 'danger');
+        console.error('❌ API PUT Error:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('Lỗi khi cập nhật dữ liệu: ' + (error.message || 'Không thể kết nối đến server'), 'danger');
+        }
+        return null;
+    }
+}
+
+// Hàm helper để parse response an toàn (có thể là JSON hoặc text)
+async function parseResponseSafe(response) {
+    try {
+        const text = await response.text();
+        if (!text) return null;
+        try {
+            return JSON.parse(text);
+        } catch {
+            return { message: text };
+        }
+    } catch {
         return null;
     }
 }
@@ -164,12 +224,16 @@ async function apiPut(endpoint, data) {
 // Ví dụ: await apiDelete('/KhuVuc/1');
 async function apiDelete(endpoint) {
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const url = `${API_BASE_URL}${endpoint}`;
+        console.log(`📡 API DELETE: ${url}`);
+
+        const response = await fetch(url, {
             method: 'DELETE',                  // phương thức DELETE (xóa)
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getAuthToken()}`
-            }
+            },
+            mode: 'cors'
         });
         if (!response.ok) {
             // Thử parse JSON error message
@@ -187,14 +251,21 @@ async function apiDelete(endpoint) {
 
         // Một số BE trả về text -> vẫn coi là thành công
         const result = await parseResponseSafe(response);
+        console.log(`✅ API DELETE success: ${endpoint}`, result);
         return result || { message: 'Xóa thành công' };
     } catch (error) {
-        console.error('API DELETE Error:', error);
+        console.error('❌ API DELETE Error:', error);
+        console.error('Error details:', {
+            endpoint,
+            url: `${API_BASE_URL}${endpoint}`,
+            message: error.message,
+            stack: error.stack
+        });
         return { error: true, message: error.message || 'Lỗi khi xóa dữ liệu' };
     }
 }
-        
-   
+
+
 //  - Xác thực người dùng
 // Sử dụng LocalStorage để lưu token và thông tin user
 // 
@@ -243,11 +314,11 @@ function checkAuth() {
 // Tạo 1 hàng (row) cho bảng - hàm này để tái sử dụng
 function createTableRow(data, columns, actions) {
     const tr = document.createElement('tr');  // tạo thẻ <tr>
-    
+
     // Duyệt qua từng cột
     columns.forEach(col => {
         const td = document.createElement('td');  // tạo thẻ <td>
-        
+
         // Nếu cột có hàm render riêng (ví dụ: format tiền, badge màu) thì dùng
         if (col.render) {
             td.innerHTML = col.render(data);
@@ -255,17 +326,17 @@ function createTableRow(data, columns, actions) {
             // Không thì chỉ hiển thị text thuần
             td.textContent = data[col.field] || '';
         }
-        
+
         tr.appendChild(td);  // thêm <td> vào <tr>
     });
-    
+
     // Thêm cột "Thao tác" (nút Sửa, Xóa)
     if (actions) {
         const td = document.createElement('td');
         td.innerHTML = actions(data);  // actions là hàm trả về HTML nút bấm
         tr.appendChild(td);
     }
-    
+
     return tr;  // trả về <tr> hoàn chỉnh
 }
 
@@ -340,34 +411,24 @@ function searchTable(inputId, tableBodyId) {
                 continue;
             }
 
-            const text = row.textContent.toLowerCase();
+            // Chỉ tìm kiếm trong cột đầu tiên (mã) và cột thứ hai (tên)
+            let searchText = '';
+            if (row.cells.length >= 1) {
+                // Cột đầu tiên (mã)
+                searchText += (row.cells[0].textContent || '').toLowerCase();
+            }
+            if (row.cells.length >= 2) {
+                // Cột thứ hai (tên)
+                searchText += ' ' + (row.cells[1].textContent || '').toLowerCase();
+            }
 
-            if (filter === '' || text.indexOf(filter) > -1) {
+            if (filter === '' || searchText.indexOf(filter) > -1) {
                 row.style.display = '';
                 visibleCount++;
             } else {
                 row.style.display = 'none';
             }
         }
-        // Chỉ tìm kiếm trong cột đầu tiên (mã) và cột thứ hai (tên)
-        // Bỏ qua các cột khác như trạng thái, thao tác, v.v.
-        let searchText = '';
-        if (row.cells.length >= 1) {
-            // Cột đầu tiên (mã)
-            searchText += (row.cells[0].textContent || '').toLowerCase();
-        }
-        if (row.cells.length >= 2) {
-            // Cột thứ hai (tên)
-            searchText += ' ' + (row.cells[1].textContent || '').toLowerCase();
-        }
-
-        if (filter === '' || searchText.indexOf(filter) > -1) {
-            row.style.display = '';
-            visibleCount++;
-        } else {
-            row.style.display = 'none';
-        }
-    }
 
         // Nếu không có kết quả, hiển thị thông báo
         if (filter !== '' && visibleCount === 0) {
@@ -414,15 +475,15 @@ function searchTable(inputId, tableBodyId) {
 function getFormData(formId) {
     const form = document.getElementById(formId);
     if (!form) return null;
-    
+
     const formData = new FormData(form);  // lấy tất cả input trong form
     const data = {};                       // object rỗng để chứa dữ liệu
-    
+
     // Duyệt qua từng cặp key-value
     for (let [key, value] of formData.entries()) {
         data[key] = value;  // gán vào object
     }
-    
+
     return data;  // trả về object
 }
 
@@ -438,7 +499,7 @@ function resetForm(formId) {
 function fillForm(formId, data) {
     const form = document.getElementById(formId);
     if (!form) return;
-    
+
     // Duyệt qua từng field trong data
     for (let key in data) {
         const input = form.elements[key];  // tìm input có name=key
@@ -478,7 +539,7 @@ function hideLoading(containerId) {
 function setActiveMenu() {
     const currentPage = window.location.pathname.split('/').pop();  // lấy tên file hiện tại
     const menuItems = document.querySelectorAll('.menu-item a');    // lấy tất cả menu item
-    
+
     menuItems.forEach(item => {
         const href = item.getAttribute('href');  // lấy href của menu item
         if (href === currentPage) {
@@ -492,32 +553,32 @@ function setActiveMenu() {
 // Đây là phần quan trọng - chạy đầu tiên khi mở trang
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // DOMContentLoaded = sự kiện khi HTML đã load xong
-    
+
     // Kiểm tra xác thực (trừ trang login)
     if (!window.location.pathname.includes('login.html')) {
         checkAuth();  // kiểm tra đã đăng nhập chưa
-        
+
         // Render menu theo role (nếu có file roles.js)
         if (typeof renderMenuByRole === 'function') {
             renderMenuByRole();  // render menu theo quyền
         } else {
             setActiveMenu();     // không có phân quyền thì chỉ tô sáng menu
         }
-        
+
         // Kiểm tra quyền truy cập trang (nếu có roles.js)
         if (typeof checkPagePermission === 'function') {
             checkPagePermission();  // kiểm tra có quyền xem trang này không
         }
-        
+
         // Hiển thị thông tin user ở header (tên, vai trò, avatar)
         const userInfo = getUserInfo();
         if (userInfo) {
             const userNameEl = document.getElementById('userName');
             const userRoleEl = document.getElementById('userRole');
             const userAvatarEl = document.getElementById('userAvatar');
-            
+
             // Điền thông tin vào các element
             if (userNameEl) userNameEl.textContent = userInfo.hoTen;
             if (userRoleEl) userRoleEl.textContent = userInfo.tenVaiTro || 'Nhân viên';

@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
+
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">☕</div>
@@ -76,7 +76,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="ca-lam.html">
+                    <a href="calam.html">
                         <span class="icon">🕐</span>
                         <span>Ca làm</span>
                     </a>
@@ -96,7 +96,7 @@
             </ul>
         </aside>
 
-        <!-- Main Content -->
+
         <main class="main-content">
             <!-- Header -->
             <header class="header">
@@ -114,7 +114,7 @@
                 </div>
             </header>
 
-            <!-- Content -->
+
             <div class="content">
                 <div id="alertContainer"></div>
 
@@ -191,8 +191,11 @@
         </div>
     </div>
 
+    <!-- JS đúng đường dẫn -->
     <script src="js/app.js"></script>
     <script src="js/roles.js"></script>
+
+
     <script>
         let isEditMode = false;
 
@@ -212,10 +215,10 @@
 
                 // Chỉ cho phép thêm mới khu vực (không sửa, không xóa)
                 const actions = () => `
-                        <div style="text-align: center; color: var(--text-light);">
-                            🔒 Cố định
-                        </div>
-                    `;
+                                <div style="text-align: center; color: var(--text-light);">
+                                    🔒 Cố định
+                                </div>
+                            `;
 
                 renderTable('khuVucTable', data, columns, actions);
 
@@ -259,10 +262,10 @@
                         moTa: (formData.moTa ?? '0').toString()
                     };
                     const result = await apiPost('/KhuVuc/add', payload);
-                    if (!result) return; // 
+                    if (!result) return; //
                     showAlert(result.message || 'Thêm khu vực thành công!', 'success');
                 } catch (e) {
-                 
+
                     console.error('Add khu vuc error:', e);
                     showAlert('Lỗi khi thêm khu vực: ' + (e.message || ''), 'danger');
                     return;

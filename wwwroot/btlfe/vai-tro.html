@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
+
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">☕</div>
@@ -76,7 +76,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="ca-lam.html">
+                    <a href="calam.html">
                         <span class="icon">🕐</span>
                         <span>Ca làm</span>
                     </a>
@@ -96,7 +96,7 @@
             </ul>
         </aside>
 
-        <!-- Main Content -->
+
         <main class="main-content">
             <!-- Header -->
             <header class="header">
@@ -114,7 +114,7 @@
                 </div>
             </header>
 
-            <!-- Content -->
+
             <div class="content">
                 <div id="alertContainer"></div>
 
@@ -171,7 +171,7 @@
             <div class="modal-body">
                 <form id="vaiTroForm">
                     <input type="hidden" id="maVT" name="maVT">
-                    
+
                     <div class="form-group">
                         <label for="tenVT">Tên vai trò <span style="color: red;">*</span></label>
                         <input type="text" id="tenVT" name="tenVT" class="form-control" required>
@@ -200,19 +200,19 @@
                     { maVT: 3, tenVT: 'Phục vụ' },
                     { maVT: 4, tenVT: 'Pha chế' }
                 ];
-                
+
                 const columns = [
                     { field: 'maVT' },
                     { field: 'tenVT' }
                 ];
-                
+
                 const actions = (data) => `
-                    <div style="text-align: center;">
-                        <button class="btn btn-sm btn-warning" onclick="editVaiTro(${data.maVT})">✏️ Sửa</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteVaiTro(${data.maVT})">🗑️ Xóa</button>
-                    </div>
-                `;
-                
+                        <div style="text-align: center;">
+                            <button class="btn btn-sm btn-warning" onclick="editVaiTro(${data.maVT})">✏️ Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteVaiTro(${data.maVT})">🗑️ Xóa</button>
+                        </div>
+                    `;
+
                 renderTable('vaiTroTable', sampleData, columns, actions);
                 searchTable('searchInput', 'vaiTroTable');
             } catch (error) {
@@ -236,7 +236,7 @@
                     maVT: id,
                     tenVT: 'Quản lý'
                 };
-                
+
                 isEditMode = true;
                 document.getElementById('modalTitle').textContent = 'Sửa vai trò';
                 fillForm('vaiTroForm', sampleData);
@@ -251,18 +251,18 @@
         async function saveVaiTro() {
             try {
                 const formData = getFormData('vaiTroForm');
-                
+
                 if (!formData.tenVT) {
                     showAlert('Vui lòng nhập tên vai trò', 'warning');
                     return;
                 }
-                
+
                 if (isEditMode) {
                     showAlert('Cập nhật vai trò thành công!', 'success');
                 } else {
                     showAlert('Thêm vai trò thành công!', 'success');
                 }
-                
+
                 closeModal('vaiTroModal');
                 loadVaiTro();
             } catch (error) {
@@ -276,7 +276,7 @@
             if (!confirmDelete('Bạn có chắc chắn muốn xóa vai trò này?')) {
                 return;
             }
-            
+
             try {
                 showAlert('Xóa vai trò thành công!', 'success');
                 loadVaiTro();
@@ -287,7 +287,7 @@
         }
 
         // Load data khi trang load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadVaiTro();
         });
     </script>

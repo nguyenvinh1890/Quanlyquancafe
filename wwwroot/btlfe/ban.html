@@ -8,97 +8,35 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
+
+        <!-- Thanh Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">☕</div>
                 <h2>CAFE MANAGER</h2>
             </div>
+
             <ul class="sidebar-menu">
-                <li class="menu-item">
-                    <a href="index.html">
-                        <span class="icon">🏠</span>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="khu-vuc.html">
-                        <span class="icon">📍</span>
-                        <span>Khu vực</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ban.html">
-                        <span class="icon">🪑</span>
-                        <span>Bàn</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="mon.html">
-                        <span class="icon">☕</span>
-                        <span>Món</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="size.html">
-                        <span class="icon">📏</span>
-                        <span>Size món</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="topping.html">
-                        <span class="icon">🧊</span>
-                        <span>Topping</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="don-hang.html">
-                        <span class="icon">📋</span>
-                        <span>Đơn hàng</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="hoa-don.html">
-                        <span class="icon">🧾</span>
-                        <span>Hóa đơn</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="thanh-toan.html">
-                        <span class="icon">💰</span>
-                        <span>Thanh toán</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="nguoi-dung.html">
-                        <span class="icon">👥</span>
-                        <span>Nhân viên</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ca-lam.html">
-                        <span class="icon">🕐</span>
-                        <span>Ca làm</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="vai-tro.html">
-                        <span class="icon">🔑</span>
-                        <span>Vai trò</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" onclick="logout(); return false;">
-                        <span class="icon">🚪</span>
-                        <span>Đăng xuất</span>
-                    </a>
-                </li>
+                <li class="menu-item"><a href="index.html"><span class="icon">🏠</span><span>Dashboard</span></a></li>
+                <li class="menu-item"><a href="khu-vuc.html"><span class="icon">📍</span><span>Khu vực</span></a></li>
+                <li class="menu-item"><a href="ban.html"><span class="icon">🪑</span><span>Bàn</span></a></li>
+                <li class="menu-item"><a href="mon.html"><span class="icon">☕</span><span>Món</span></a></li>
+                <li class="menu-item"><a href="size.html"><span class="icon">📏</span><span>Size món</span></a></li>
+                <li class="menu-item"><a href="topping.html"><span class="icon">🧊</span><span>Topping</span></a></li>
+                <li class="menu-item"><a href="don-hang.html"><span class="icon">📋</span><span>Đơn hàng</span></a></li>
+                <li class="menu-item"><a href="hoa-don.html"><span class="icon">🧾</span><span>Hóa đơn</span></a></li>
+                <li class="menu-item"><a href="thanh-toan.html"><span class="icon">💰</span><span>Thanh toán</span></a></li>
+                <li class="menu-item"><a href="nguoi-dung.html"><span class="icon">👥</span><span>Nhân viên</span></a></li>
+                <li class="menu-item"><a href="calam.html"><span class="icon">🕐</span><span>Ca làm</span></a></li>
+                <li class="menu-item"><a href="vai-tro.html"><span class="icon">🔑</span><span>Vai trò</span></a></li>
+                <li class="menu-item"><a href="#" onclick="logout(); return false;"><span class="icon">🚪</span><span>Đăng xuất</span></a></li>
             </ul>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Nội dung chính -->
         <main class="main-content">
-            <!-- Header -->
+
+            <!-- Thanh tiêu đề -->
             <header class="header">
                 <div class="header-left">
                     <h1>Quản lý Bàn</h1>
@@ -114,7 +52,7 @@
                 </div>
             </header>
 
-            <!-- Content -->
+            <!-- Khu vực nội dung -->
             <div class="content">
                 <div id="alertContainer"></div>
 
@@ -122,21 +60,22 @@
                     <div class="card-header">
                         <h3>Danh sách Bàn</h3>
                     </div>
+
                     <div class="card-body">
-                        <!-- Action Bar -->
+
+                        <!-- Thanh công cụ -->
                         <div class="action-bar">
                             <div class="search-box">
                                 <input type="text" id="searchInput" placeholder="Tìm kiếm bàn...">
                                 <span class="search-icon">🔍</span>
                             </div>
+
                             <div class="action-buttons">
-                                <button class="btn btn-primary" onclick="openAddModal()">
-                                    ➕ Thêm bàn
-                                </button>
+                                <button class="btn btn-primary" onclick="openAddModal()">Thêm bàn</button>
                             </div>
                         </div>
 
-                        <!-- Table -->
+                        <!-- Bảng dữ liệu -->
                         <div class="table-container">
                             <table class="table">
                                 <thead>
@@ -146,43 +85,50 @@
                                         <th>Khu vực</th>
                                         <th>Sức chứa</th>
                                         <th>Trạng thái</th>
-                                        <th style="text-align: center;">Thao tác</th>
+                                        <th style="text-align:center;">Thao tác</th>
                                     </tr>
                                 </thead>
+
                                 <tbody id="banTable">
                                     <tr>
-                                        <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <td colspan="6" style="text-align:center; padding:40px;">
                                             <div class="spinner"></div>
                                         </td>
                                     </tr>
                                 </tbody>
+
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 
-    <!-- Modal Thêm/Sửa -->
+    <!-- Modal thêm / sửa bàn -->
     <div id="banModal" class="modal">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h3 id="modalTitle">Thêm bàn</h3>
                 <button class="modal-close" onclick="closeModal('banModal')">×</button>
             </div>
+
             <div class="modal-body">
                 <form id="banForm">
+
                     <input type="hidden" id="maBan" name="maBan">
-                    
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="tenBan">Tên bàn <span style="color: red;">*</span></label>
+                            <label for="tenBan">Tên bàn *</label>
                             <input type="text" id="tenBan" name="tenBan" class="form-control" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="maKhu">Khu vực <span style="color: red;">*</span></label>
+                            <label for="maKhu">Khu vực *</label>
                             <select id="maKhu" name="maKhu" class="form-control" required>
                                 <option value="">-- Chọn khu vực --</option>
                             </select>
@@ -204,79 +150,86 @@
                             </select>
                         </div>
                     </div>
+
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('banModal')">Hủy</button>
                 <button class="btn btn-primary" onclick="saveBan()">Lưu</button>
             </div>
+
         </div>
     </div>
 
+    <!-- JavaScript -->
     <script src="js/app.js"></script>
     <script src="js/roles.js"></script>
+
     <script>
+
         let isEditMode = false;
 
-        // Load danh sách khu vực cho dropdown
+        // Tải danh sách khu vực vào dropdown
         async function loadKhuVucDropdown() {
             try {
-                // Gọi API thực tế
                 const response = await apiGet('/KhuVuc/get-all');
                 const data = Array.isArray(response) ? response : [];
-                
+
                 const select = document.getElementById('maKhu');
+
                 data.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.maKV;
                     option.textContent = item.tenKV;
                     select.appendChild(option);
                 });
-                
+
             } catch (error) {
-                console.error('Error loading khu vuc:', error);
+                console.error('Lỗi tải khu vực:', error);
             }
         }
 
-        // Load danh sách bàn
+        // Tải danh sách bàn
         async function loadBan() {
             try {
-                // Gọi API thực tế
                 const response = await apiGet('/Ban/get-all');
                 const data = Array.isArray(response) ? response : [];
-                
+
                 const columns = [
                     { field: 'maBan' },
                     { field: 'tenBan' },
                     { field: 'tenKhu' },
-                    { field: 'sucChua', render: (data) => data.sucChua ? `${data.sucChua} người` : 'N/A' },
-                    { 
+                    { field: 'sucChua', render: (d) => d.sucChua ? `${d.sucChua} người` : 'N/A' },
+                    {
                         field: 'trangThai',
-                        render: (data) => {
-                            const badgeClass = data.trangThai === 'Trống' ? 'badge-success' : 
-                                              data.trangThai === 'Đang sử dụng' ? 'badge-danger' : 'badge-warning';
-                            return `<span class="badge ${badgeClass}">${data.trangThai}</span>`;
+                        render: (d) => {
+                            const badgeClass =
+                                d.trangThai === 'Trống' ? 'badge-success' :
+                                    d.trangThai === 'Đang sử dụng' ? 'badge-danger' : 'badge-warning';
+
+                            return `<span class="badge ${badgeClass}">${d.trangThai}</span>`;
                         }
                     }
                 ];
-                
-                const actions = (data) => `
-                    <div style="text-align: center;">
-                        <button class="btn btn-sm btn-warning" onclick="editBan(${data.maBan})">✏️ Sửa</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteBan(${data.maBan})">🗑️ Xóa</button>
-                    </div>
-                `;
-                
+
+                const actions = (d) => `
+                        <div style="text-align:center;">
+                            <button class="btn btn-sm btn-warning" onclick="editBan(${d.maBan})">Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteBan(${d.maBan})">Xóa</button>
+                        </div>
+                    `;
+
                 renderTable('banTable', data, columns, actions);
                 searchTable('searchInput', 'banTable');
-                
+
             } catch (error) {
-                console.error('Error loading ban:', error);
+                console.error('Lỗi tải danh sách bàn:', error);
                 showAlert('Lỗi khi tải danh sách bàn: ' + error.message, 'danger');
             }
         }
 
-        // Mở modal thêm
+        // Mở modal thêm bàn
         function openAddModal() {
             isEditMode = false;
             document.getElementById('modalTitle').textContent = 'Thêm bàn';
@@ -284,23 +237,23 @@
             openModal('banModal');
         }
 
-        // Sửa bàn
+        // Mở modal sửa bàn
         async function editBan(id) {
             try {
-                // Lấy dữ liệu từ API
                 const response = await apiGet('/Ban/get-all');
                 const allData = Array.isArray(response) ? response : [];
-                const ban = allData.find(item => item.maBan === id);
-                
+
+                const ban = allData.find(x => x.maBan === id);
+
                 if (ban) {
                     isEditMode = true;
                     document.getElementById('modalTitle').textContent = 'Sửa bàn';
                     fillForm('banForm', ban);
                     openModal('banModal');
                 }
-                
+
             } catch (error) {
-                console.error('Error loading ban:', error);
+                console.error('Lỗi lấy thông tin bàn:', error);
                 showAlert('Lỗi khi tải thông tin bàn: ' + error.message, 'danger');
             }
         }
@@ -309,57 +262,53 @@
         async function saveBan() {
             try {
                 const formData = getFormData('banForm');
-                
+
                 if (!formData.tenBan || !formData.maKhu) {
-                    showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'warning');
+                    showAlert('Vui lòng nhập đầy đủ thông tin bắt buộc', 'warning');
                     return;
                 }
-                
+
                 let result;
+
                 if (isEditMode) {
-                    // Gọi API PUT
                     result = await apiPut('/Ban/update', formData);
-                    showAlert(result.message || 'Cập nhật bàn thành công!', 'success');
+                    showAlert(result.message || 'Cập nhật bàn thành công', 'success');
                 } else {
-                    // Gọi API POST
                     result = await apiPost('/Ban/add', formData);
-                    showAlert(result.message || 'Thêm bàn thành công!', 'success');
+                    showAlert(result.message || 'Thêm bàn thành công', 'success');
                 }
-                
+
                 closeModal('banModal');
                 loadBan();
-                
+
             } catch (error) {
-                console.error('Error saving ban:', error);
+                console.error('Lỗi lưu bàn:', error);
                 showAlert('Lỗi khi lưu bàn: ' + error.message, 'danger');
             }
         }
 
         // Xóa bàn
         async function deleteBan(id) {
-            if (!confirmDelete('Bạn có chắc chắn muốn xóa bàn này?')) {
-                return;
-            }
-            
+            if (!confirmDelete('Bạn có chắc chắn muốn xóa bàn này?')) return;
+
             try {
-                // Gọi API DELETE
                 const result = await apiDelete(`/Ban/delete/${id}`);
-                
-                showAlert(result.message || 'Xóa bàn thành công!', 'success');
+                showAlert(result.message || 'Xóa bàn thành công', 'success');
                 loadBan();
-                
+
             } catch (error) {
-                console.error('Error deleting ban:', error);
+                console.error('Lỗi xóa bàn:', error);
                 showAlert('Lỗi khi xóa bàn: ' + error.message, 'danger');
             }
         }
 
-        // Load data khi trang load
-        document.addEventListener('DOMContentLoaded', function() {
+        // Chạy khi tải trang
+        document.addEventListener('DOMContentLoaded', function () {
             loadKhuVucDropdown();
             loadBan();
         });
+
     </script>
+
 </body>
 </html>
-

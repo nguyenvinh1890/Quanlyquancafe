@@ -77,7 +77,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="ca-lam.html">
+                    <a href="calam.html">
                         <span class="icon">🕐</span>
                         <span>Ca làm</span>
                     </a>
@@ -314,6 +314,59 @@
     <!-- Script -->
     <script src="js/app.js"></script>
     <script src="js/roles.js"></script>
+    <script>
+        // Load danh sách đơn hàng
+        async function loadDonHang() {
+            try {
+                console.log('📋 Loading đơn hàng...');
+                const response = await apiGet('/DonHang/get-all');
+                const data = Array.isArray(response) ? response : [];
+
+                console.log('📋 Đơn hàng data received:', data.length);
+
+                const columns = [
+                    { field: 'maDH' },
+                    { field: 'maBan', render: (item) => item.maBan ? `Bàn ${item.maBan}` : 'N/A' },
+                    { field: 'loaiDH' },
+                    {
+                        field: 'trangThai',
+                        render: (item) => {
+                            const status = item.trangThai || 'Chưa xác định';
+                            const badgeClass = status === 'Hoàn thành' ? 'badge-success' :
+                                status === 'Đang xử lý' ? 'badge-warning' : 'badge-danger';
+                            return `<span class="badge ${badgeClass}">${status}</span>`;
+                        }
+                    },
+                    { field: 'moBoiTen' },
+                    { field: 'moLuc', render: (item) => formatDateTime(item.moLuc || '') }
+                ];
+
+                const actions = (item) => `
+                            <div style="text-align: center;">
+                                <button class="btn btn-sm btn-info" onclick="viewChiTiet(${item.maDH})">👁️ Chi tiết</button>
+                                <button class="btn btn-sm btn-warning" onclick="editDonHang(${item.maDH})">✏️ Sửa</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteDonHang(${item.maDH})">🗑️ Xóa</button>
+                            </div>
+                        `;
+
+                renderTable('donHangTable', data, columns, actions);
+                searchTable('searchInput', 'donHangTable');
+
+                console.log('✅ Đơn hàng loaded successfully');
+
+            } catch (error) {
+                console.error('❌ Error loading đơn hàng:', error);
+                hideLoading('donHangTable');
+                const errorMsg = error.message || 'Không thể tải danh sách đơn hàng. Kiểm tra backend đã chạy chưa?';
+                showAlert('Lỗi: ' + errorMsg, 'danger');
+            }
+        }
+
+        // Load data khi trang load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadDonHang();
+        });
+    </script>
 
 </body>
 </html>

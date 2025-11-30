@@ -25,7 +25,7 @@
                 <li class="menu-item"><a href="hoa-don.html"><span class="icon">🧾</span><span>Hóa đơn</span></a></li>
                 <li class="menu-item"><a href="thanh-toan.html"><span class="icon">💰</span><span>Thanh toán</span></a></li>
                 <li class="menu-item"><a href="nguoi-dung.html"><span class="icon">👥</span><span>Nhân viên</span></a></li>
-                <li class="menu-item"><a href="ca-lam.html"><span class="icon">🕐</span><span>Ca làm</span></a></li>
+                <li class="menu-item"><a href="calam.html"><span class="icon">🕐</span><span>Ca làm</span></a></li>
                 <li class="menu-item"><a href="vai-tro.html"><span class="icon">🔑</span><span>Vai trò</span></a></li>
                 <li class="menu-item"><a href="#" onclick="logout(); return false;"><span class="icon">🚪</span><span>Đăng xuất</span></a></li>
             </ul>
@@ -175,11 +175,11 @@
 
                 // Các nút thao tác (Sửa / Xóa)
                 const actions = (data) => `
-                        <div style="text-align: center;">
-                            <button class="btn btn-sm btn-warning" onclick="editSize(${data.maSize})">✏️ Sửa</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteSize(${data.maSize})">🗑️ Xóa</button>
-                        </div>
-                    `;
+                            <div style="text-align: center;">
+                                <button class="btn btn-sm btn-warning" onclick="editSize(${data.maSize})">✏️ Sửa</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteSize(${data.maSize})">🗑️ Xóa</button>
+                            </div>
+                        `;
 
                 // Hiển thị dữ liệu ra bảng
                 renderTable('sizeTable', data, columns, actions);

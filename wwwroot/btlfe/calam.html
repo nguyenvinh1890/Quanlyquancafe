@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Ca làm - Quản lý Quán Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">☕</div>
+                <h2>CAFE MANAGER</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="index.html"><span class="icon"></span><span>Dashboard</span></a></li>
+                <li class="menu-item"><a href="ban.html"><span class="icon"></span><span>Bàn</span></a></li>
+                <li class="menu-item"><a href="hoa-don.html"><span class="icon"></span><span>Hóa đơn</span></a></li>
+                <li class="menu-item"><a href="calam.html" class="active"><span class="icon"></span><span>Ca làm</span></a></li>
+                <li class="menu-item"><a href="#" onclick="logout(); return false;"><span class="icon"></span><span>Đăng xuất</span></a></li>
+            </ul>
+        </aside>
+
+        <!-- Nội dung chính -->
+        <main class="main-content">
+
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Quản lý Ca làm</h1>
+                </div>
+
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">Admin</div>
+                            <div class="user-role" id="userRole">Quản lý</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Nội dung -->
+            <div class="content">
+                <div id="alertContainer"></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Danh sách Ca làm</h3>
+                    </div>
+
+                    <div class="card-body">
+                        
+                        <!-- Thanh hành động -->
+                        <div class="action-bar">
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="Tìm kiếm ca làm...">
+                                <span class="search-icon"></span>
+                            </div>
+
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="openAddModal()">Thêm ca làm</button>
+                            </div>
+                        </div>
+
+                        <!-- Bảng danh sách -->
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã Ca</th>
+                                        <th>Tên Ca</th>
+                                        <th>Giờ bắt đầu</th>
+                                        <th>Giờ kết thúc</th>
+                                        <th style="text-align:center;">Thao tác</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="caLamTable">
+                                    <tr>
+                                        <td colspan="5" style="text-align:center;padding:40px;">
+                                            <div class="spinner"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal thêm / sửa ca làm -->
+    <div id="caLamModal" class="modal">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3 id="modalTitle">Thêm ca làm</h3>
+                <button class="modal-close" onclick="closeModal('caLamModal')">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <form id="caLamForm">
+                    <input type="hidden" id="maCa" name="maCa">
+
+                    <div class="form-group">
+                        <label for="tenCa">Tên Ca <span style="color:red">*</span></label>
+                        <input type="text" id="tenCa" name="tenCa" class="form-control" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gioBatDau">Giờ bắt đầu <span style="color:red">*</span></label>
+                            <input type="time" id="gioBatDau" name="gioBatDau" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gioKetThuc">Giờ kết thúc <span style="color:red">*</span></label>
+                            <input type="time" id="gioKetThuc" name="gioKetThuc" class="form-control" required>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('caLamModal')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveCaLam()">Lưu</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/roles.js"></script>
+
+    <script>
+
+        let isEditMode = false;
+
+        // Tải danh sách ca làm
+        async function loadCaLam() {
+            try {
+                showLoading('caLamTable');
+                const response = await apiGet('/CaLam/get-all');
+                hideLoading('caLamTable');
+
+                const data = Array.isArray(response) ? response : [];
+
+                if (data.length > 0) {
+                    const columns = [
+                        { field: 'maCa' },
+                        { field: 'tenCa' },
+                        { field: 'gioBatDau', render: (x) => x.gioBatDau ? x.gioBatDau.substring(0, 5) : 'N/A' },
+                        { field: 'gioKetThuc', render: (x) => x.gioKetThuc ? x.gioKetThuc.substring(0, 5) : 'N/A' }
+                    ];
+
+                    const actions = (x) => `
+                        <div style="text-align:center;">
+                            <button class="btn btn-sm btn-warning" onclick="editCaLam(${x.maCa})">Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteCaLam(${x.maCa})">Xóa</button>
+                        </div>`;
+
+                    renderTable('caLamTable', data, columns, actions);
+                    searchTable('searchInput', 'caLamTable');
+
+                } else {
+                    document.getElementById('caLamTable').innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align:center;padding:40px;color:var(--text-light);">
+                                Không có dữ liệu ca làm
+                            </td>
+                        </tr>`;
+                }
+
+            } catch (error) {
+                hideLoading('caLamTable');
+                showAlert('Lỗi khi tải danh sách ca làm!', 'danger');
+            }
+        }
+
+        // Mở modal thêm
+        function openAddModal() {
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Thêm ca làm';
+            resetForm('caLamForm');
+            openModal('caLamModal');
+        }
+
+        // Sửa ca làm
+        async function editCaLam(id) {
+            try {
+                const response = await apiGet('/CaLam/get-all');
+                const ca = response.find(x => x.maCa === id);
+
+                if (ca) {
+                    isEditMode = true;
+                    document.getElementById('modalTitle').textContent = 'Sửa ca làm';
+                    fillForm('caLamForm', ca);
+                    openModal('caLamModal');
+                }
+
+            } catch (error) {
+                showAlert('Lỗi khi tải thông tin ca làm!', 'danger');
+            }
+        }
+
+        // Lưu ca làm
+        async function saveCaLam() {
+            const formData = {
+                maCa: document.getElementById('maCa').value || 0,
+                tenCa: document.getElementById('tenCa').value.trim(),
+                gioBatDau: document.getElementById('gioBatDau').value,
+                gioKetThuc: document.getElementById('gioKetThuc').value
+            };
+
+            if (!formData.tenCa || !formData.gioBatDau || !formData.gioKetThuc) {
+                showAlert('Vui lòng nhập đầy đủ thông tin!', 'warning');
+                return;
+            }
+
+            try {
+                if (isEditMode) {
+                    await apiPut('/CaLam/update', formData);
+                    showAlert('Cập nhật ca làm thành công!', 'success');
+                } else {
+                    await apiPost('/CaLam/add', formData);
+                    showAlert('Thêm ca làm thành công!', 'success');
+                }
+
+                closeModal('caLamModal');
+                loadCaLam();
+
+            } catch (error) {
+                showAlert('Lỗi khi lưu dữ liệu!', 'danger');
+            }
+        }
+
+        // Xóa ca làm
+        async function deleteCaLam(id) {
+            if (!confirmDelete('Bạn chắc chắn muốn xóa ca làm này?')) return;
+
+            try {
+                await apiDelete(`/CaLam/delete/${id}`);
+                showAlert('Xóa ca làm thành công!', 'success');
+                loadCaLam();
+
+            } catch (error) {
+                showAlert('Lỗi khi xóa ca làm!', 'danger');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCaLam);
+
+    </script>
+
+</body>
+</html>

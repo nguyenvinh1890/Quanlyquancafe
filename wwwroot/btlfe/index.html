@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
+        <!-- Thanh điều hướng bên trái -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">☕</div>
@@ -76,7 +76,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="ca-lam.html">
+                    <a href="calam.html">
                         <span class="icon">🕐</span>
                         <span>Ca làm</span>
                     </a>
@@ -96,7 +96,7 @@
             </ul>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Nội dung chính -->
         <main class="main-content">
             <!-- Header -->
             <header class="header">
@@ -161,7 +161,7 @@
                     </div>
                 </div>
 
-                <!-- Recent Orders -->
+                <!-- Đơn hàng -->
                 <div class="card">
                     <div class="card-header">
                         <h3>Đơn hàng gần đây</h3>
@@ -192,7 +192,7 @@
                     </div>
                 </div>
 
-                <!-- Recent Invoices -->
+                <!-- Hóa đơn -->
                 <div class="card">
                     <div class="card-header">
                         <h3>Hóa đơn gần đây</h3>
@@ -227,101 +227,185 @@
         </main>
     </div>
 
+    <!-- JS đúng đường dẫn -->
     <script src="js/app.js"></script>
     <script src="js/roles.js"></script>
+
     <script>
         // Load dashboard data
         async function loadDashboardData() {
             try {
-                // Load statistics
-                // TODO: Gọi API thực tế
-                // const orders = await apiGet('/DonHang');
-                // const invoices = await apiGet('/HoaDon');
-                // const tables = await apiGet('/Ban');
-                // const products = await apiGet('/Mon');
-                
-                // Giả lập dữ liệu
-                document.getElementById('totalOrders').textContent = '15';
-                document.getElementById('totalRevenue').textContent = formatCurrency(5500000);
-                document.getElementById('totalTables').textContent = '8/20';
-                document.getElementById('totalProducts').textContent = '45';
-                
+                console.log('📊 Loading dashboard data...');
+
+                // Load statistics từ API thực tế
+                const [orders, invoices, tables, products] = await Promise.all([
+                    apiGet('/DonHang/get-all'),
+                    apiGet('/HoaDon/get-all'),
+                    apiGet('/Ban/get-all'),
+                    apiGet('/Mon/get-all')
+                ]);
+
+                console.log('📊 Dashboard data received:', {
+                    orders: orders?.length || 0,
+                    invoices: invoices?.length || 0,
+                    tables: tables?.length || 0,
+                    products: products?.length || 0
+                });
+
+                // Tính toán thống kê
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+                // Đếm đơn hàng hôm nay
+                const ordersArray = Array.isArray(orders) ? orders : [];
+                const ordersToday = ordersArray.filter(order => {
+                    const orderDate = order.moLuc ? new Date(order.moLuc).toISOString().split('T')[0] : '';
+                    return orderDate === today;
+                }).length;
+
+                // Tính doanh thu hôm nay (từ hóa đơn)
+                const invoicesArray = Array.isArray(invoices) ? invoices : [];
+                const revenueToday = invoicesArray
+                    .filter(inv => {
+                        const invDate = inv.taoLuc ? new Date(inv.taoLuc).toISOString().split('T')[0] : '';
+                        return invDate === today && inv.trangThai === 'Đã thanh toán';
+                    })
+                    .reduce((sum, inv) => sum + (inv.tongTien || inv.tamTinh || 0), 0);
+
+                // Đếm bàn đang sử dụng
+                const tablesArray = Array.isArray(tables) ? tables : [];
+                const tablesInUse = tablesArray.filter(table => table.trangThai === 'Đang sử dụng').length;
+                const totalTables = tablesArray.length;
+
+                // Tổng số món
+                const productsArray = Array.isArray(products) ? products : [];
+                const totalProducts = productsArray.length;
+
+                // Hiển thị thống kê
+                document.getElementById('totalOrders').textContent = ordersToday;
+                document.getElementById('totalRevenue').textContent = formatCurrency(revenueToday);
+                document.getElementById('totalTables').textContent = `${tablesInUse}/${totalTables}`;
+                document.getElementById('totalProducts').textContent = totalProducts;
+
                 // Load recent orders
-                loadRecentOrders();
-                
+                loadRecentOrders(ordersArray);
+
                 // Load recent invoices
-                loadRecentInvoices();
-                
+                loadRecentInvoices(invoicesArray);
+
+                console.log('✅ Dashboard loaded successfully');
+
             } catch (error) {
-                console.error('Error loading dashboard:', error);
-                showAlert('Lỗi khi tải dữ liệu dashboard', 'danger');
+                console.error('❌ Error loading dashboard:', error);
+                showAlert('Lỗi khi tải dữ liệu dashboard: ' + (error.message || 'Không thể kết nối đến server'), 'danger');
             }
         }
-        
-        async function loadRecentOrders() {
-            // TODO: Gọi API thực tế
-            // const orders = await apiGet('/DonHang?limit=5');
-            
-            // Giả lập dữ liệu
-            const sampleOrders = [
-                { maDH: 1, maBan: 5, loaiDH: 'Tại quán', trangThai: 'Đang xử lý', moBoiTen: 'Nguyễn Văn A', moLuc: new Date().toISOString() },
-                { maDH: 2, maBan: 3, loaiDH: 'Mang về', trangThai: 'Hoàn thành', moBoiTen: 'Trần Thị B', moLuc: new Date(Date.now() - 3600000).toISOString() },
-                { maDH: 3, maBan: 8, loaiDH: 'Tại quán', trangThai: 'Đang xử lý', moBoiTen: 'Lê Văn C', moLuc: new Date(Date.now() - 7200000).toISOString() }
-            ];
-            
-            const columns = [
-                { field: 'maDH' },
-                { field: 'maBan', render: (data) => data.maBan ? `Bàn ${data.maBan}` : 'N/A' },
-                { field: 'loaiDH' },
-                { 
-                    field: 'trangThai',
-                    render: (data) => {
-                        const badgeClass = data.trangThai === 'Hoàn thành' ? 'badge-success' : 
-                                          data.trangThai === 'Đang xử lý' ? 'badge-warning' : 'badge-danger';
-                        return `<span class="badge ${badgeClass}">${data.trangThai}</span>`;
+
+        async function loadRecentOrders(ordersData = null) {
+            try {
+                // Nếu chưa có dữ liệu thì gọi API
+                let orders = ordersData;
+                if (!orders || orders.length === 0) {
+                    orders = await apiGet('/DonHang/get-all');
+                }
+
+                const ordersArray = Array.isArray(orders) ? orders : [];
+
+                if (ordersArray.length === 0) {
+                    const tbody = document.getElementById('recentOrdersTable');
+                    if (tbody) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-light);">Không có dữ liệu</td></tr>';
                     }
-                },
-                { field: 'moBoiTen' },
-                { field: 'moLuc', render: (data) => formatDateTime(data.moLuc) }
-            ];
-            
-            renderTable('recentOrdersTable', sampleOrders, columns);
+                    return;
+                }
+
+                // Sắp xếp theo thời gian mới nhất và lấy 5 đơn hàng gần nhất
+                const recentOrders = ordersArray
+                    .sort((a, b) => new Date(b.moLuc || 0) - new Date(a.moLuc || 0))
+                    .slice(0, 5);
+
+                const columns = [
+                    { field: 'maDH' },
+                    { field: 'maBan', render: (data) => data.maBan ? `Bàn ${data.maBan}` : 'N/A' },
+                    { field: 'loaiDH' },
+                    {
+                        field: 'trangThai',
+                        render: (data) => {
+                            const status = data.trangThai || 'Chưa xác định';
+                            const badgeClass = status === 'Hoàn thành' ? 'badge-success' :
+                                status === 'Đang xử lý' ? 'badge-warning' : 'badge-danger';
+                            return `<span class="badge ${badgeClass}">${status}</span>`;
+                        }
+                    },
+                    { field: 'moBoiTen' },
+                    { field: 'moLuc', render: (data) => formatDateTime(data.moLuc || '') }
+                ];
+
+                renderTable('recentOrdersTable', recentOrders, columns);
+            } catch (error) {
+                console.error('Error loading recent orders:', error);
+                const tbody = document.getElementById('recentOrdersTable');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-danger);">Lỗi khi tải dữ liệu</td></tr>';
+                }
+            }
         }
-        
-        async function loadRecentInvoices() {
-            // TODO: Gọi API thực tế
-            // const invoices = await apiGet('/HoaDon?limit=5');
-            
-            // Giả lập dữ liệu
-            const sampleInvoices = [
-                { maHD: 1, maDH: 1, tamTinh: 250000, giamGia: 0, thue: 25000, trangThai: 'Đã thanh toán', taoLuc: new Date().toISOString() },
-                { maHD: 2, maDH: 2, tamTinh: 180000, giamGia: 20000, thue: 16000, trangThai: 'Đã thanh toán', taoLuc: new Date(Date.now() - 3600000).toISOString() }
-            ];
-            
-            const columns = [
-                { field: 'maHD' },
-                { field: 'maDH' },
-                { field: 'tamTinh', render: (data) => formatCurrency(data.tamTinh) },
-                { field: 'giamGia', render: (data) => formatCurrency(data.giamGia) },
-                { field: 'thue', render: (data) => formatCurrency(data.thue) },
-                { 
-                    field: 'trangThai',
-                    render: (data) => {
-                        const badgeClass = data.trangThai === 'Đã thanh toán' ? 'badge-success' : 'badge-warning';
-                        return `<span class="badge ${badgeClass}">${data.trangThai}</span>`;
+
+        async function loadRecentInvoices(invoicesData = null) {
+            try {
+                // Nếu chưa có dữ liệu thì gọi API
+                let invoices = invoicesData;
+                if (!invoices || invoices.length === 0) {
+                    invoices = await apiGet('/HoaDon/get-all');
+                }
+
+                const invoicesArray = Array.isArray(invoices) ? invoices : [];
+
+                if (invoicesArray.length === 0) {
+                    const tbody = document.getElementById('recentInvoicesTable');
+                    if (tbody) {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">Không có dữ liệu</td></tr>';
                     }
-                },
-                { field: 'taoLuc', render: (data) => formatDateTime(data.taoLuc) }
-            ];
-            
-            renderTable('recentInvoicesTable', sampleInvoices, columns);
+                    return;
+                }
+
+                // Sắp xếp theo thời gian mới nhất và lấy 5 hóa đơn gần nhất
+                const recentInvoices = invoicesArray
+                    .sort((a, b) => new Date(b.taoLuc || 0) - new Date(a.taoLuc || 0))
+                    .slice(0, 5);
+
+                const columns = [
+                    { field: 'maHD' },
+                    { field: 'maDH' },
+                    { field: 'tamTinh', render: (data) => formatCurrency(data.tamTinh || 0) },
+                    { field: 'giamGia', render: (data) => formatCurrency(data.giamGia || 0) },
+                    { field: 'thue', render: (data) => formatCurrency(data.thue || 0) },
+                    {
+                        field: 'trangThai',
+                        render: (data) => {
+                            const status = data.trangThai || 'Chưa xác định';
+                            const badgeClass = status === 'Đã thanh toán' ? 'badge-success' : 'badge-warning';
+                            return `<span class="badge ${badgeClass}">${status}</span>`;
+                        }
+                    },
+                    { field: 'taoLuc', render: (data) => formatDateTime(data.taoLuc || '') }
+                ];
+
+                renderTable('recentInvoicesTable', recentInvoices, columns);
+            } catch (error) {
+                console.error('Error loading recent invoices:', error);
+                const tbody = document.getElementById('recentInvoicesTable');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-danger);">Lỗi khi tải dữ liệu</td></tr>';
+                }
+            }
         }
-        
+
         // Load data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadDashboardData();
         });
     </script>
 </body>
 </html>
+
 

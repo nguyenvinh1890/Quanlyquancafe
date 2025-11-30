@@ -41,7 +41,8 @@ CREATE TABLE mon (
   ma_mon INT IDENTITY(1,1) PRIMARY KEY,
   ten_mon NVARCHAR(100) NOT NULL,
   loai_mon NVARCHAR(50),
-  dang_ban BIT DEFAULT 1
+  dang_ban BIT DEFAULT 1,
+  la_topping_di_kem BIT DEFAULT 0
 );
 
 CREATE TABLE size_mon (
@@ -54,7 +55,8 @@ CREATE TABLE size_mon (
 
 CREATE TABLE topping (
   ma_topping INT IDENTITY(1,1) PRIMARY KEY,
-  ten_topping NVARCHAR(100) NOT NULL UNIQUE
+  ten_topping NVARCHAR(100) NOT NULL UNIQUE,
+  gia DECIMAL(18,2) DEFAULT 0
 );
 
 CREATE TABLE lua_chon_topping (
@@ -88,7 +90,7 @@ CREATE TABLE chi_tiet_don (
   ma_ct INT IDENTITY(1,1) PRIMARY KEY,
   ma_dh INT NOT NULL,
   ma_mon INT NOT NULL,
-  ma_size INT NOT NULL,
+  ma_size INT NULL,
   so_luong INT DEFAULT 1,
   don_gia DECIMAL(18,2),
   da_gui_phache BIT DEFAULT 0,
@@ -102,7 +104,7 @@ CREATE TABLE don_topping (
   ma_lua_chon INT NOT NULL,
   gia_them DECIMAL(18,2),
   PRIMARY KEY (ma_ct, ma_lua_chon),
-  FOREIGN KEY (ma_ct) REFERENCES chi_tiet_don(ma_ct),
+  FOREIGN KEY (ma_ct) REFERENCES chi_tiet_don(ma_ct) ON DELETE CASCADE,
   FOREIGN KEY (ma_lua_chon) REFERENCES lua_chon_topping(ma_lua_chon)
 );
 
@@ -449,9 +451,10 @@ VALUES
 ALTER TABLE ca_lam
 ALTER COLUMN thoi_gian_bat_dau DATETIME NULL;
 
-select * from chi_tiet_don
+select * from chi_tiet_don;
+ALTER TABLE ca_lam
 ALTER COLUMN thoi_gian_ket_thuc DATETIME NULL;
-sp_columns ca_lam
+EXEC sp_columns ca_lam;
 -- chi tiết đơn Không cho xóa, chỉ cập nhật trạng thái
 ALTER TABLE chi_tiet_don ADD da_xoa BIT DEFAULT 0;
 EXEC sp_columns chi_tiet_don;
@@ -565,5 +568,89 @@ DELETE FROM khuyen_mai WHERE ma_km = 2;
 
 ALTER TABLE lich_su_kho
 ADD tao_luc DATETIME DEFAULT GETDATE();
+
+
+-- CẬP NHẬT CHO TÍNH NĂNG TOPPING
+
+GO
+
+-- Thêm cột gia vào bảng topping (nếu chưa có)
+IF NOT EXISTS (
+    SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = 'topping' AND COLUMN_NAME = 'gia'
+)
+BEGIN
+    ALTER TABLE topping ADD gia DECIMAL(18,2) DEFAULT 0;
+    PRINT 'Đã thêm cột gia vào bảng topping';
+END
+GO
+
+-- Thêm cột la_topping_di_kem vào bảng mon (nếu chưa có)
+IF NOT EXISTS (
+    SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = 'mon' AND COLUMN_NAME = 'la_topping_di_kem'
+)
+BEGIN
+    ALTER TABLE mon ADD la_topping_di_kem BIT DEFAULT 0;
+    PRINT 'Đã thêm cột la_topping_di_kem vào bảng mon';
+END
+GO
+
+-- Sửa cột ma_size trong chi_tiet_don cho phép NULL 
+IF EXISTS (
+    SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = 'chi_tiet_don' 
+    AND COLUMN_NAME = 'ma_size' 
+    AND IS_NULLABLE = 'NO'
+)
+BEGIN
+    -- Xóa FOREIGN KEY constraint nếu có
+    DECLARE @FKName1 NVARCHAR(200);
+    SELECT TOP 1 @FKName1 = CONSTRAINT_NAME 
+    FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
+    WHERE TABLE_NAME = 'chi_tiet_don' 
+    AND CONSTRAINT_NAME LIKE '%size%'
+    AND CONSTRAINT_TYPE = 'FOREIGN KEY';
+    
+    IF @FKName1 IS NOT NULL
+    BEGIN
+        DECLARE @sql1 NVARCHAR(MAX) = 'ALTER TABLE chi_tiet_don DROP CONSTRAINT ' + @FKName1;
+        EXEC sp_executesql @sql1;
+    END
+    
+    -- Sửa cột cho phép NULL
+    ALTER TABLE chi_tiet_don ALTER COLUMN ma_size INT NULL;
+    
+    -- Thêm lại FOREIGN KEY
+    IF NOT EXISTS (
+        SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
+        WHERE TABLE_NAME = 'chi_tiet_don' 
+        AND CONSTRAINT_NAME LIKE '%FK%size%'
+    )
+    BEGIN
+        ALTER TABLE chi_tiet_don 
+        ADD CONSTRAINT FK_chi_tiet_don_size_mon 
+        FOREIGN KEY (ma_size) REFERENCES size_mon(ma_size);
+    END
+END
+GO
+
+
+GO
+
+-- Thêm index để tối ưu
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_don_topping_ma_ct' AND object_id = OBJECT_ID('don_topping'))
+BEGIN
+    CREATE INDEX IX_don_topping_ma_ct ON don_topping(ma_ct);
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_chi_tiet_don_ma_dh' AND object_id = OBJECT_ID('chi_tiet_don'))
+BEGIN
+    CREATE INDEX IX_chi_tiet_don_ma_dh ON chi_tiet_don(ma_dh);
+END
+GO
+
+
 
 

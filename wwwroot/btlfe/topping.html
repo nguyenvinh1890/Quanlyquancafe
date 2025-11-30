@@ -88,7 +88,7 @@
                 </li>
 
                 <li class="menu-item">
-                    <a href="ca-lam.html">
+                    <a href="calam.html">
                         <span class="icon">🕐</span>
                         <span>Ca làm</span>
                     </a>
@@ -246,11 +246,11 @@
                 ];
 
                 const actions = (d) => `
-                        <div style="text-align:center;">
-                            <button class="btn btn-sm btn-warning" onclick="editTopping(${d.maTopping})">✏️ Sửa</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteTopping(${d.maTopping})">🗑️ Xóa</button>
-                        </div>
-                    `;
+                            <div style="text-align:center;">
+                                <button class="btn btn-sm btn-warning" onclick="editTopping(${d.maTopping})">✏️ Sửa</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteTopping(${d.maTopping})">🗑️ Xóa</button>
+                            </div>
+                        `;
 
                 renderTable('toppingTable', data, columns, actions);
                 searchTable('searchInput', 'toppingTable');

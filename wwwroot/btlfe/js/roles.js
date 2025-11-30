@@ -132,7 +132,7 @@ const MENU_ITEMS = [
         id: 'ca-lam',
         icon: '🕐',
         text: 'Ca làm',
-        href: 'ca-lam.html',
+        href: 'calam.html',
         permission: 'ca-lam'
     },
     {
@@ -150,13 +150,13 @@ function hasPermission(permission) {
     if (!userInfo || !userInfo.maVT) {
         return false;
     }
-    
+
     // Tìm role object dựa vào maVT
     const role = Object.values(ROLES).find(r => r.id === parseInt(userInfo.maVT));
     if (!role) {
         return false;
     }
-    
+
     return role.permissions.includes(permission);
 }
 
@@ -166,7 +166,7 @@ function getUserPermissions() {
     if (!userInfo || !userInfo.maVT) {
         return [];
     }
-    
+
     const role = Object.values(ROLES).find(r => r.id === parseInt(userInfo.maVT));
     return role ? role.permissions : [];
 }
@@ -175,12 +175,12 @@ function getUserPermissions() {
 function renderMenuByRole() {
     const menuContainer = document.querySelector('.sidebar-menu');
     if (!menuContainer) return;
-    
+
     const userPermissions = getUserPermissions();
-    
+
     // Clear menu hiện tại
     menuContainer.innerHTML = '';
-    
+
     // Render menu items có quyền
     MENU_ITEMS.forEach(item => {
         if (userPermissions.includes(item.permission)) {
@@ -195,7 +195,7 @@ function renderMenuByRole() {
             menuContainer.appendChild(li);
         }
     });
-    
+
     // Thêm nút đăng xuất (luôn hiển thị)
     const logoutLi = document.createElement('li');
     logoutLi.className = 'menu-item';
@@ -206,7 +206,7 @@ function renderMenuByRole() {
         </a>
     `;
     menuContainer.appendChild(logoutLi);
-    
+
     // Set active menu
     setActiveMenu();
 }
@@ -214,21 +214,21 @@ function renderMenuByRole() {
 // Kiểm tra quyền truy cập trang hiện tại
 function checkPagePermission() {
     const currentPage = window.location.pathname.split('/').pop();
-    
+
     // Trang login không cần check
     if (currentPage === 'login.html' || currentPage === '') {
         return true;
     }
-    
+
     // Tìm menu item của trang hiện tại
     const pageWithoutExt = currentPage.replace('.html', '');
     const menuItem = MENU_ITEMS.find(item => item.href === currentPage);
-    
+
     if (!menuItem) {
         // Nếu không tìm thấy trong menu, cho phép truy cập (có thể là trang đặc biệt)
         return true;
     }
-    
+
     // Kiểm tra quyền
     if (!hasPermission(menuItem.permission)) {
         // Không có quyền - chuyển về dashboard hoặc trang đầu tiên có quyền
@@ -243,7 +243,7 @@ function checkPagePermission() {
         }, 1500);
         return false;
     }
-    
+
     return true;
 }
 
